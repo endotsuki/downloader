@@ -58,7 +58,7 @@ export default function VideoDownloader() {
         if (selectedDirectory) {
           try {
             // Fetch the file from server
-            const response = await fetch(`${API_BASE_URL}/download/${item.id}`);
+            const response = await fetch(`${API_BASE_URL}/api/download/${item.id}`);
             if (!response.ok) throw new Error("Failed to fetch file");
             
             const blob = await response.blob();
@@ -87,7 +87,7 @@ export default function VideoDownloader() {
   }, [stats.queue, selectedDirectory]);
 
   const triggerBrowserDownload = (itemId: number, filename: string) => {
-    const downloadUrl = `${API_BASE_URL}/download/${itemId}`;
+    const downloadUrl = `${API_BASE_URL}/api/download/${itemId}`;
     const link = document.createElement("a");
     link.href = downloadUrl;
     link.download = filename;
@@ -99,7 +99,7 @@ export default function VideoDownloader() {
 
   const fetchStatus = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/status`);
+      const response = await fetch(`${API_BASE_URL}/api/status`);
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -115,7 +115,7 @@ export default function VideoDownloader() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/queue`, {
+      const response = await fetch(`${API_BASE_URL}/api/queue`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +141,7 @@ export default function VideoDownloader() {
     formData.append("file", file);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/upload`, {
+      const response = await fetch(`${API_BASE_URL}/api/upload`, {
         method: "POST",
         body: formData,
       });
@@ -157,7 +157,7 @@ export default function VideoDownloader() {
 
   const clearDownloads = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/clear`, {
+      const response = await fetch(`${API_BASE_URL}/api/clear`, {
         method: "POST",
       });
       const data = await response.json();
