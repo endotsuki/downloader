@@ -18,37 +18,22 @@ os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 print(f"✓ Temporary download folder: {DOWNLOAD_FOLDER}")
 
 def detect_ffmpeg():
-    """Detect FFmpeg location with multiple fallback options"""
-    # Check current directory
+    # First check bundled binary
     base_path = os.path.dirname(os.path.abspath(__file__))
-    
-    # Try different possible locations
-    possible_locations = [
-        os.path.join(base_path, 'ffmpeg.exe'),  # Same folder as script
-        os.path.join(base_path, 'ffmpeg', 'ffmpeg.exe'),  # In ffmpeg subfolder
-        os.path.join(os.getcwd(), 'ffmpeg.exe'),  # Current working directory
-        'ffmpeg.exe',  # Try as is (might be in PATH)
-    ]
-    
-    for location in possible_locations:
-        if os.path.exists(location):
-            print(f"✓ FFMPEG DETECTED AT: {location}")
-            return location
+    bundled_ffmpeg = os.path.join(base_path, "ffmpeg", "ffmpeg")
+    if os.path.exists(bundled_ffmpeg):
+        print(f"✓ FFMPEG DETECTED AT: {bundled_ffmpeg}")
+        return bundled_ffmpeg
     
     import shutil
-    ffmpeg_path = shutil.which('ffmpeg')
+    ffmpeg_path = shutil.which("ffmpeg")
     if ffmpeg_path:
+        print(f"✓ FFMPEG DETECTED AT: {ffmpeg_path}")
         return ffmpeg_path
     
-    print("=" * 70)
-    print("⚠ WARNING: FFmpeg not found!")
-    print("=" * 70)
-    print("Please install FFmpeg:")
-    print("1. Download from: https://ffmpeg.org/download.html")
-    print("2. Place ffmpeg.exe in the same folder as backend.py")
-    print("   OR add FFmpeg to your system PATH")
-    print("=" * 70)
+    print("⚠ FFmpeg not found. Download/merge will fail.")
     return None
+
 
 FFMPEG_PATH = detect_ffmpeg()
 MAX_CONCURRENT = 3
