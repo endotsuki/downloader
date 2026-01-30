@@ -4,7 +4,7 @@ import { DownloadControls } from "./DownloadControls";
 import { StatsCards } from "./StatusCards";
 import { DownloadTable } from "./DownloadTable";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL;
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mmoo-rau0.onrender.com";
 
 
 export interface DownloadItem {
