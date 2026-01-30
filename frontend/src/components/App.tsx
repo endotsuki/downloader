@@ -99,7 +99,7 @@ export default function VideoDownloader() {
 
   const fetchStatus = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/status`);
+      const response = await fetch(`${API_BASE_URL}/api/status`);
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -115,7 +115,7 @@ export default function VideoDownloader() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/queue`, {
+      const response = await fetch(`${API_BASE_URL}/api/queue`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
