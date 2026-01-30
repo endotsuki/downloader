@@ -1,0 +1,12 @@
+# Required steps
+# User must intall this requirement Addons to run the Pro Version
+# Pro-Version give you the best videos quality and audio
+
+List Addons:
+1. Python version from 3.13 or Higher
+
+pip install flask yt-dlp
+pip install quickjs
+pip install -U yt-dlp
+pip install -U curl-cffi
+pip install flask-cors
