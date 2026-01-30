@@ -6,7 +6,6 @@ import { DownloadTable } from "./DownloadTable";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mmoo-rau0.onrender.com";
 
-
 export interface DownloadItem {
   id: number;
   url: string;
@@ -99,7 +98,7 @@ export default function VideoDownloader() {
 
   const fetchStatus = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/status`);
+      const response = await fetch(`${API_BASE_URL}/status`);
       const data = await response.json();
       setStats(data);
     } catch (error) {
@@ -115,7 +114,7 @@ export default function VideoDownloader() {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/queue`, {
+      const response = await fetch(`${API_BASE_URL}/queue`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

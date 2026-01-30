@@ -168,7 +168,7 @@ def start_workers():
         threading.Thread(target=worker_loop, daemon=True).start()
 
 # API Routes
-@app.route("/queue", methods=["POST"])
+@app.route("/api/queue", methods=["POST"])
 def queue_download():
     global next_id
     data = request.get_json(force=True, silent=True) or {}
@@ -185,7 +185,7 @@ def queue_download():
             task_queue.put(url)
     return jsonify(downloads)
 
-@app.route("/upload", methods=["POST"])
+@app.route("/api/upload", methods=["POST"])
 def upload_file():
     global next_id
     f = request.files.get("file")
@@ -201,12 +201,12 @@ def upload_file():
             task_queue.put(url)
     return jsonify(downloads)
 
-@app.route("/status")
+@app.route("/api/status")
 def status():
     with state_lock:
         return jsonify(downloads)
 
-@app.route("/download/<int:item_id>")
+@app.route("/api/download/<int:item_id>")
 def download_file(item_id):
     """Serve the downloaded file to trigger browser download"""
     with state_lock:
@@ -225,7 +225,7 @@ def download_file(item_id):
     filename = item.get('filename', 'video.mp4')
     return send_file(filepath, as_attachment=True, download_name=filename)
 
-@app.route("/clear", methods=["POST"])
+@app.route("/api/clear", methods=["POST"])
 def clear_downloads():
     global next_id
     import shutil
