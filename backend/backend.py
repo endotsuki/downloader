@@ -109,27 +109,21 @@ def download_one(item):
                 with state_lock:
                     item['progress'] = max(0.0, min(100.0, pct))
                     item['status'] = 'Downloading'
-                print(f"[{item['id']}] Download progress: {pct:.1f}%")
         elif d['status'] == 'finished':
             with state_lock:
                 item['progress'] = 100.0
                 item['status'] = 'Merging'
-            print(f"[{item['id']}] Download finished, merging...")
             # Capture the filename when download finishes
             if 'filename' in d:
                 nonlocal downloaded_filename
                 downloaded_filename = d['filename']
 
     opts = ydl_options(progress_hook)
-    print(f"[{item['id']}] Starting download: {item['url']}")
     try:
         with YoutubeDL(opts) as ydl:
             # Extract info first to get the expected filename
-            print(f"[{item['id']}] Extracting info...")
             info = ydl.extract_info(item['url'], download=False)
             expected_filename = ydl.prepare_filename(info)
-            print(f"[{item['id']}] Expected filename: {expected_filename}")
-            print(f"[{item['id']}] Downloading...")
             ydl.download([item['url']])
         
         # Use the expected filename, or find the most recently modified file as fallback
@@ -146,11 +140,8 @@ def download_one(item):
             item['filename'] = os.path.basename(downloaded_filename) if downloaded_filename else None
             item['filepath'] = downloaded_filename if downloaded_filename else None
             downloads['completed'] += 1
-        print(f"[{item['id']}] ✓ Completed: {item['filename']}")
     except Exception as e:
-        print(f"[{item['id']}] ✗ DOWNLOAD FAILED: {type(e).__name__}: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        print(f"--- DOWNLOAD FAILED: {str(e)} ---")
         with state_lock:
             item['status'] = 'Error'
             item['error'] = str(e)
@@ -182,14 +173,12 @@ def queue_download():
     global next_id
     data = request.get_json(force=True, silent=True) or {}
     urls = data.get("urls", [])
-    print(f"📥 Queue request received with {len(urls)} URLs")
     with state_lock:
         for raw_url in urls:
             url = (raw_url or "").strip()
             if not url:
                 continue
             item = {"id": next_id, "url": url, "status": "Queued", "progress": 0.0}
-            print(f"   [{next_id}] Added: {url}")
             next_id += 1
             downloads['queue'].append(item)
             downloads['total'] += 1
@@ -216,15 +205,6 @@ def upload_file():
 def status():
     with state_lock:
         return jsonify(downloads)
-
-@app.route("/api/health")
-def health():
-    """Health check endpoint"""
-    return jsonify({
-        "status": "ok",
-        "ffmpeg": "available" if FFMPEG_PATH else "not available",
-        "queue_size": len(downloads['queue'])
-    })
 
 @app.route("/api/download/<int:item_id>")
 def download_file(item_id):
