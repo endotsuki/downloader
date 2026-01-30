@@ -253,8 +253,29 @@ def clear_downloads():
                 break
     return jsonify(downloads)
 
+# Add a root route for testing
+@app.route("/")
+def index():
+    return jsonify({
+        "message": "Video Downloader API",
+        "endpoints": [
+            "/status",
+            "/queue",
+            "/upload",
+            "/download/<id>",
+            "/clear"
+        ]
+    })
+
 if __name__ == "__main__":
     start_workers()
-    import os
     port = int(os.environ.get("PORT", 5000))
+    print(f"Starting Flask server on port {port}")
+    print(f"Available routes:")
+    print(f"  - GET  /")
+    print(f"  - GET  /status")
+    print(f"  - POST /queue")
+    print(f"  - POST /upload")
+    print(f"  - GET  /download/<id>")
+    print(f"  - POST /clear")
     app.run(host="0.0.0.0", port=port, debug=False)
