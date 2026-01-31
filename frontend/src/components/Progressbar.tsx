@@ -15,12 +15,6 @@ export function ProgressBar({ progress }: ProgressBarProps) {
     <div className="flex items-center gap-3">
       <div className="flex-1 max-w-[200px]">
         <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
-          {/* Background glow */}
-          <div
-            className={`absolute inset-0 ${getProgressColor()} opacity-20 blur-sm transition-all duration-300`}
-            style={{ width: `${progress.toFixed(1)}%` }}
-          />
-
           {/* Progress bar */}
           <div
             className={`relative h-full ${getProgressColor()} rounded-full transition-all duration-300 shadow-lg`}

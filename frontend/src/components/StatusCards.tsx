@@ -21,8 +21,8 @@ export function StatsCards({
     {
       label: "Completed",
       value: completed,
-      color: "text-emerald-400",
-      bgColor: "bg-emerald-500/10",
+      color: "text-green-400",
+      bgColor: "bg-green-500/10",
     },
     {
       label: "Downloading",

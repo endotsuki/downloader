@@ -32,7 +32,7 @@ export function DownloadControls({
   const handleSelectDirectory = async () => {
     if (!("showDirectoryPicker" in window)) {
       alert(
-        "Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera."
+        "Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera.",
       );
       return;
     }
@@ -54,7 +54,7 @@ export function DownloadControls({
     <div className="space-y-4 mb-6">
       {/* Directory Selection */}
       <div className="flex flex-wrap gap-3 items-center">
-        <div className="flex-1 min-w-[300px] px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 text-white text-sm">
+        <div className="flex-1 min-w-[300px] px-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white text-sm">
           {selectedDirectory ? (
             <span className="text-emerald-400">
               📁 {selectedDirectory.name}
@@ -82,7 +82,7 @@ export function DownloadControls({
       {/* Single URL Download */}
       <div className="flex flex-wrap gap-3 items-center">
         <input
-          className="flex-1 min-w-[300px] px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 text-white placeholder-gray-400 outline-none focus:border-white/30 focus:bg-white/10 transition-all"
+          className="flex-1 min-w-[300px] px-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white placeholder-gray-400 outline-none focus:border-white/30 focus:bg-white/10 transition-all"
           type="text"
           placeholder="Paste video URL here..."
           value={videoLink}
@@ -99,7 +99,7 @@ export function DownloadControls({
       <div className="flex flex-wrap gap-3 items-center">
         <input
           ref={fileInputRef}
-          className="flex-1 cursor-pointer min-w-[300px] px-4 py-3 rounded-2xl bg-white/5 backdrop-blur-xl border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer file:transition-all"
+          className="flex-1 cursor-pointer min-w-[300px] px-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer file:transition-all"
           type="file"
           accept=".txt"
         />

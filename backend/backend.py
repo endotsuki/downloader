@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from yt_dlp import YoutubeDL
 from yt_dlp.networking.impersonate import ImpersonateTarget
+import shutil
 import subprocess
 
 app = Flask(__name__)
@@ -50,19 +51,25 @@ print(f"✓ Temporary download folder: {DOWNLOAD_FOLDER}")
 #     print("   OR add FFmpeg to your system PATH")
 #     print("=" * 70)
 #     return None
+
 def detect_ffmpeg():
+    # Check if ffmpeg exists in PATH
+    ffmpeg_path = shutil.which("ffmpeg")
+    if ffmpeg_path:
+        print(f"✓ FFmpeg detected at {ffmpeg_path}")
+        return ffmpeg_path
+    
+    # fallback: try running ffmpeg
     try:
         result = subprocess.run(
-            ["ffmpeg", "-version"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True
+            ["ffmpeg", "-version"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
         if result.returncode == 0:
-            print("✓ FFmpeg detected")
             return "ffmpeg"
-    except Exception as e:
-        print("⚠ FFmpeg not found:", e)
+    except Exception:
+        pass
+
+    print("⚠ FFmpeg not found!")
     return None
 
 FFMPEG_PATH = detect_ffmpeg()
