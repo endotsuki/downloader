@@ -4,53 +4,26 @@ import time
 import tempfile
 import glob
 from queue import Queue
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, Response
 from flask_cors import CORS
 from yt_dlp import YoutubeDL
 from yt_dlp.networking.impersonate import ImpersonateTarget
 import shutil
 import subprocess
+import json
+import logging
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
+
+# Disable Flask's request logging for the SSE endpoint
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 # Use temp directory instead of project folder - files will be served to users and cleaned up
 DOWNLOAD_FOLDER = tempfile.mkdtemp(prefix="video_downloader_")
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 print(f"✓ Temporary download folder: {DOWNLOAD_FOLDER}")
-
-# def detect_ffmpeg():
-#     """Detect FFmpeg location with multiple fallback options"""
-#     # Check current directory
-#     base_path = os.path.dirname(os.path.abspath(__file__))
-    
-#     # Try different possible locations
-#     possible_locations = [
-#         os.path.join(base_path, 'ffmpeg.exe'),  # Same folder as script
-#         os.path.join(base_path, 'ffmpeg', 'ffmpeg.exe'),  # In ffmpeg subfolder
-#         os.path.join(os.getcwd(), 'ffmpeg.exe'),  # Current working directory
-#         'ffmpeg.exe',  # Try as is (might be in PATH)
-#     ]
-    
-#     for location in possible_locations:
-#         if os.path.exists(location):
-#             print(f"✓ FFMPEG DETECTED AT: {location}")
-#             return location
-    
-#     import shutil
-#     ffmpeg_path = shutil.which('ffmpeg')
-#     if ffmpeg_path:
-#         return ffmpeg_path
-    
-#     print("=" * 70)
-#     print("⚠ WARNING: FFmpeg not found!")
-#     print("=" * 70)
-#     print("Please install FFmpeg:")
-#     print("1. Download from: https://ffmpeg.org/download.html")
-#     print("2. Place ffmpeg.exe in the same folder as backend.py")
-#     print("   OR add FFmpeg to your system PATH")
-#     print("=" * 70)
-#     return None
 
 def detect_ffmpeg():
     # Check if ffmpeg exists in PATH
@@ -85,6 +58,22 @@ next_id = 1
 task_queue = Queue()
 state_lock = threading.Lock()
 
+# SSE client management
+sse_clients = []
+sse_lock = threading.Lock()
+
+def broadcast_update():
+    """Send update to all connected SSE clients"""
+    with state_lock:
+        data = json.dumps(downloads)
+    
+    with sse_lock:
+        for client_queue in sse_clients[:]:
+            try:
+                client_queue.put(data)
+            except:
+                sse_clients.remove(client_queue)
+
 def ydl_options(progress_cb):
     opts = {
         'outtmpl': os.path.join(DOWNLOAD_FOLDER, '%(title)s.%(ext)s'),
@@ -96,16 +85,6 @@ def ydl_options(progress_cb):
         'buffersize': 1024 * 64,
         'continuedl': True,
     }
-    
-    # Only use format merging if FFmpeg is available
-    # if FFMPEG_PATH:
-    #     opts['format'] = 'bestvideo+bestaudio/best'
-    #     opts['merge_output_format'] = 'mp4'
-    #     opts['ffmpeg_location'] = FFMPEG_PATH
-    #     opts['postprocessors'] = [{
-    #         'key': 'FFmpegVideoConvertor',
-    #         'preferedformat': 'mp4',
-    #     }]
     
     if FFMPEG_PATH:
         opts['format'] = 'bestvideo+bestaudio/best'
@@ -135,10 +114,12 @@ def download_one(item):
                 with state_lock:
                     item['progress'] = max(0.0, min(100.0, pct))
                     item['status'] = 'Downloading'
+                broadcast_update()  # Send update to clients
         elif d['status'] == 'finished':
             with state_lock:
                 item['progress'] = 100.0
                 item['status'] = 'Merging'
+            broadcast_update()  # Send update to clients
             # Capture the filename when download finishes
             if 'filename' in d:
                 nonlocal downloaded_filename
@@ -166,11 +147,13 @@ def download_one(item):
             item['filename'] = os.path.basename(downloaded_filename) if downloaded_filename else None
             item['filepath'] = downloaded_filename if downloaded_filename else None
             downloads['completed'] += 1
+        broadcast_update()  # Send update to clients
     except Exception as e:
         print(f"--- DOWNLOAD FAILED: {str(e)} ---")
         with state_lock:
             item['status'] = 'Error'
             item['error'] = str(e)
+        broadcast_update()  # Send update to clients
 
 def worker_loop():
     while True:
@@ -182,11 +165,13 @@ def worker_loop():
             item = next((x for x in downloads['queue'] if x['url']==url and x['status']=='Queued'), None)
             if item:
                 item['status'] = 'Starting'
+        broadcast_update()  # Send update to clients
         if item:
             download_one(item)
         time.sleep(0.2)
         with state_lock:
             downloads['downloading'] -= 1
+        broadcast_update()  # Send update to clients
         task_queue.task_done()
 
 def start_workers():
@@ -209,6 +194,7 @@ def queue_download():
             downloads['queue'].append(item)
             downloads['total'] += 1
             task_queue.put(url)
+    broadcast_update()  # Send update to clients
     return jsonify(downloads)
 
 @app.route("/api/upload", methods=["POST"])
@@ -225,12 +211,38 @@ def upload_file():
             downloads['queue'].append(item)
             downloads['total'] += 1
             task_queue.put(url)
+    broadcast_update()  # Send update to clients
     return jsonify(downloads)
 
 @app.route("/api/status")
 def status():
     with state_lock:
         return jsonify(downloads)
+
+@app.route("/api/events")
+def events():
+    """Server-Sent Events endpoint for real-time updates"""
+    def event_stream():
+        client_queue = Queue()
+        with sse_lock:
+            sse_clients.append(client_queue)
+        
+        try:
+            # Send initial state
+            with state_lock:
+                data = json.dumps(downloads)
+            yield f"data: {data}\n\n"
+            
+            # Send updates as they occur
+            while True:
+                data = client_queue.get()
+                yield f"data: {data}\n\n"
+        except GeneratorExit:
+            with sse_lock:
+                if client_queue in sse_clients:
+                    sse_clients.remove(client_queue)
+    
+    return Response(event_stream(), mimetype="text/event-stream")
 
 @app.route("/api/download/<int:item_id>")
 def download_file(item_id):
@@ -254,7 +266,6 @@ def download_file(item_id):
 @app.route("/api/clear", methods=["POST"])
 def clear_downloads():
     global next_id
-    import shutil
     
     with state_lock:
         # Clean up old files before clearing
@@ -277,6 +288,7 @@ def clear_downloads():
                 task_queue.get_nowait()
             except:
                 break
+    broadcast_update()  # Send update to clients
     return jsonify(downloads)
 
 # Add a root route for testing
@@ -286,6 +298,7 @@ def index():
         "message": "Video Downloader API",
         "endpoints": [
             "/status",
+            "/events (SSE)",
             "/queue",
             "/upload",
             "/download/<id>",
@@ -300,6 +313,7 @@ if __name__ == "__main__":
     print(f"Available routes:")
     print(f"  - GET  /")
     print(f"  - GET  /status")
+    print(f"  - GET  /events (SSE - real-time updates)")
     print(f"  - POST /queue")
     print(f"  - POST /upload")
     print(f"  - GET  /download/<id>")
