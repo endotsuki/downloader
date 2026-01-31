@@ -4,7 +4,8 @@ import { DownloadControls } from "./DownloadControls";
 import { StatsCards } from "./StatusCards";
 import { DownloadTable } from "./DownloadTable";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://mmoo-rau0.onrender.com";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://mmoo-rau0.onrender.com";
 
 export interface DownloadItem {
   id: number;
@@ -14,6 +15,7 @@ export interface DownloadItem {
   error?: string;
   filename?: string;
   filepath?: string;
+  size?: string;
 }
 
 export interface StatsData {
@@ -25,7 +27,8 @@ export interface StatsData {
 
 export default function VideoDownloader() {
   const [videoLink, setVideoLink] = useState("");
-  const [selectedDirectory, setSelectedDirectory] = useState<FileSystemDirectoryHandle | null>(null);
+  const [selectedDirectory, setSelectedDirectory] =
+    useState<FileSystemDirectoryHandle | null>(null);
   const [stats, setStats] = useState<StatsData>({
     total: 0,
     completed: 0,
@@ -59,18 +62,18 @@ export default function VideoDownloader() {
             // Fetch the file from server
             const response = await fetch(`${API_BASE_URL}/download/${item.id}`);
             if (!response.ok) throw new Error("Failed to fetch file");
-            
+
             const blob = await response.blob();
-            
+
             // Write to selected directory using File System Access API
             const fileHandle = await selectedDirectory.getFileHandle(
               item.filename,
-              { create: true }
+              { create: true },
             );
             const writable = await fileHandle.createWritable();
             await writable.write(blob);
             await writable.close();
-            
+
             console.log(`✓ Saved to selected folder: ${item.filename}`);
           } catch (error) {
             console.error("Error saving to selected directory:", error);

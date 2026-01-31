@@ -93,7 +93,7 @@ def ydl_options(progress_cb):
         'windowsfilenames': True,
         'updatetime': False,
         'noverifyhttpscert': True,
-        'buffersize': 1024 * 16,
+        'buffersize': 1024 * 64,
         'continuedl': True,
     }
     
