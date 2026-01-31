@@ -297,12 +297,12 @@ def index():
     return jsonify({
         "message": "Video Downloader API",
         "endpoints": [
-            "/status",
-            "/events (SSE)",
-            "/queue",
-            "/upload",
-            "/download/<id>",
-            "/clear"
+            "/api/status",
+            "/api/events (SSE)",
+            "/api/queue",
+            "/api/upload",
+            "/api/download/<id>",
+            "/api/clear"
         ]
     })
 
