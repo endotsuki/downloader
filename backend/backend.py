@@ -8,6 +8,7 @@ from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 from yt_dlp import YoutubeDL
 from yt_dlp.networking.impersonate import ImpersonateTarget
+import subprocess
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for React frontend
@@ -17,41 +18,55 @@ DOWNLOAD_FOLDER = tempfile.mkdtemp(prefix="video_downloader_")
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 print(f"✓ Temporary download folder: {DOWNLOAD_FOLDER}")
 
+# def detect_ffmpeg():
+#     """Detect FFmpeg location with multiple fallback options"""
+#     # Check current directory
+#     base_path = os.path.dirname(os.path.abspath(__file__))
+    
+#     # Try different possible locations
+#     possible_locations = [
+#         os.path.join(base_path, 'ffmpeg.exe'),  # Same folder as script
+#         os.path.join(base_path, 'ffmpeg', 'ffmpeg.exe'),  # In ffmpeg subfolder
+#         os.path.join(os.getcwd(), 'ffmpeg.exe'),  # Current working directory
+#         'ffmpeg.exe',  # Try as is (might be in PATH)
+#     ]
+    
+#     for location in possible_locations:
+#         if os.path.exists(location):
+#             print(f"✓ FFMPEG DETECTED AT: {location}")
+#             return location
+    
+#     import shutil
+#     ffmpeg_path = shutil.which('ffmpeg')
+#     if ffmpeg_path:
+#         return ffmpeg_path
+    
+#     print("=" * 70)
+#     print("⚠ WARNING: FFmpeg not found!")
+#     print("=" * 70)
+#     print("Please install FFmpeg:")
+#     print("1. Download from: https://ffmpeg.org/download.html")
+#     print("2. Place ffmpeg.exe in the same folder as backend.py")
+#     print("   OR add FFmpeg to your system PATH")
+#     print("=" * 70)
+#     return None
 def detect_ffmpeg():
-    """Detect FFmpeg location with multiple fallback options"""
-    # Check current directory
-    base_path = os.path.dirname(os.path.abspath(__file__))
-    
-    # Try different possible locations
-    possible_locations = [
-        os.path.join(base_path, 'ffmpeg.exe'),  # Same folder as script
-        os.path.join(base_path, 'ffmpeg', 'ffmpeg.exe'),  # In ffmpeg subfolder
-        os.path.join(os.getcwd(), 'ffmpeg.exe'),  # Current working directory
-        'ffmpeg.exe',  # Try as is (might be in PATH)
-    ]
-    
-    for location in possible_locations:
-        if os.path.exists(location):
-            print(f"✓ FFMPEG DETECTED AT: {location}")
-            return location
-    
-    import shutil
-    ffmpeg_path = shutil.which('ffmpeg')
-    if ffmpeg_path:
-        return ffmpeg_path
-    
-    print("=" * 70)
-    print("⚠ WARNING: FFmpeg not found!")
-    print("=" * 70)
-    print("Please install FFmpeg:")
-    print("1. Download from: https://ffmpeg.org/download.html")
-    print("2. Place ffmpeg.exe in the same folder as backend.py")
-    print("   OR add FFmpeg to your system PATH")
-    print("=" * 70)
+    try:
+        result = subprocess.run(
+            ["ffmpeg", "-version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
+        )
+        if result.returncode == 0:
+            print("✓ FFmpeg detected")
+            return "ffmpeg"
+    except Exception as e:
+        print("⚠ FFmpeg not found:", e)
     return None
 
 FFMPEG_PATH = detect_ffmpeg()
-MAX_CONCURRENT = 3
+MAX_CONCURRENT = 1
 
 downloads = {
     "total": 0,
@@ -76,14 +91,17 @@ def ydl_options(progress_cb):
     }
     
     # Only use format merging if FFmpeg is available
+    # if FFMPEG_PATH:
+    #     opts['format'] = 'bestvideo+bestaudio/best'
+    #     opts['merge_output_format'] = 'mp4'
+    #     opts['ffmpeg_location'] = FFMPEG_PATH
+    #     opts['postprocessors'] = [{
+    #         'key': 'FFmpegVideoConvertor',
+    #         'preferedformat': 'mp4',
+    #     }]
     if FFMPEG_PATH:
         opts['format'] = 'bestvideo+bestaudio/best'
         opts['merge_output_format'] = 'mp4'
-        opts['ffmpeg_location'] = FFMPEG_PATH
-        opts['postprocessors'] = [{
-            'key': 'FFmpegVideoConvertor',
-            'preferedformat': 'mp4',
-        }]
     else:
         # Fallback to single format if FFmpeg not available
         print("⚠ FFmpeg not available - downloading single format only")
