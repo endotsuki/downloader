@@ -5,7 +5,7 @@ import { StatsCards } from "./StatusCards";
 import { DownloadTable } from "./DownloadTable";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://mmoo-rau0.onrender.com";
+  import.meta.env.VITE_API_URL || "https://handsome-susana-laxa-6d48f7a6.koyeb.app/";
 
 export interface DownloadItem {
   id: number;
