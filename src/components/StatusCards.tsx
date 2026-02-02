@@ -59,7 +59,10 @@ export function StatsCards({
             className={`mt-2 h-1 ${stat.bgColor} rounded-full overflow-hidden`}
           >
             <div
-              className={`h-full ${stat.color.replace("text", "bg")} opacity-60 group-hover:opacity-100 transition-opacity`}
+              className={`h-full ${stat.color.replace(
+                "text",
+                "bg"
+              )} opacity-60 group-hover:opacity-100 transition-opacity`}
             />
           </div>
         </div>

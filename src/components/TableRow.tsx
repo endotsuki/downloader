@@ -62,12 +62,15 @@ export function TableRow({ item, index }: TableRowProps) {
 
       <td className="p-4 border-b border-white/5">
         <div className="max-w-[400px]">
-          <div
-            className="truncate text-gray-300 text-sm group-hover:text-white transition-colors"
+          <a
+            href={item.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block truncate text-gray-300 text-sm group-hover:text-white transition-colors hover:underline"
             title={item.url}
           >
             {item.url}
-          </div>
+          </a>
         </div>
       </td>
 

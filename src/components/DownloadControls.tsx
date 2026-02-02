@@ -19,6 +19,9 @@ interface DownloadControlsProps {
   fileInputRef: RefObject<HTMLInputElement>;
 }
 
+const inputBase =
+  "w-full rounded-lg border border-zinc-700/80 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition-colors focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20";
+
 export function DownloadControls({
   videoLink,
   setVideoLink,
@@ -32,11 +35,10 @@ export function DownloadControls({
   const handleSelectDirectory = async () => {
     if (!("showDirectoryPicker" in window)) {
       alert(
-        "Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera.",
+        "Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera."
       );
       return;
     }
-
     try {
       const directoryHandle = await (window as any).showDirectoryPicker({
         mode: "readwrite",
@@ -51,66 +53,101 @@ export function DownloadControls({
   };
 
   return (
-    <div className="space-y-4 mb-6">
-      {/* Directory Selection */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <div className="flex-1 min-w-[300px] px-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white text-sm">
-          {selectedDirectory ? (
-            <span className="text-emerald-400">
-              📁 {selectedDirectory.name}
-            </span>
-          ) : (
-            <span className="text-gray-400">
-              No folder selected (will use browser default)
-            </span>
-          )}
-        </div>
-        <Button variant="design-review" onClick={handleSelectDirectory}>
-          <HugeiconsIcon icon={Folder01Icon} size={23} />
-          Choose Folder
-        </Button>
-        {selectedDirectory && (
+    <div className="space-y-6">
+      {/* Primary: URL + Download */}
+      <div>
+        <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-zinc-500">
+          Single URL
+        </label>
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <input
+            className={`flex-1 min-w-0 ${inputBase}`}
+            type="text"
+            placeholder="Paste video URL…"
+            value={videoLink}
+            onChange={(e) => setVideoLink(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && queueSingle()}
+          />
           <Button
-            variant="in-review"
-            onClick={() => setSelectedDirectory(null)}
+            variant="on-hold"
+            onClick={queueSingle}
+            className="shrink-0 sm:w-auto"
           >
-            Clear
+            <HugeiconsIcon icon={Download01Icon} size={20} />
+            Download
           </Button>
-        )}
+        </div>
       </div>
 
-      {/* Single URL Download */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <input
-          className="flex-1 min-w-[300px] px-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white placeholder-gray-400 outline-none focus:border-white/30 focus:bg-white/10 transition-all"
-          type="text"
-          placeholder="Paste video URL here..."
-          value={videoLink}
-          onChange={(e) => setVideoLink(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && queueSingle()}
-        />
-        <Button variant="on-hold" onClick={queueSingle}>
-          <HugeiconsIcon icon={Download01Icon} size={23} />
-          Download
-        </Button>
-      </div>
+      {/* Secondary: Folder, Batch, Clear */}
+      <div className="flex flex-col py-9 sm:flex-row sm:items-center gap-4 border-t border-zinc-800/80">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
+          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 shrink-0">
+            Save to
+          </span>
+          <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0">
+            <div
+              className={`flex items-center min-h-[40px] ${inputBase} text-zinc-400 cursor-default`}
+            >
+              {selectedDirectory ? (
+                <span className="truncate text-emerald-400/90">
+                  {selectedDirectory.name}
+                </span>
+              ) : (
+                <span>Browser default</span>
+              )}
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button variant="design-review" onClick={handleSelectDirectory}>
+                <HugeiconsIcon icon={Folder01Icon} size={20} />
+                Folder
+              </Button>
+              {selectedDirectory && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSelectedDirectory(null)}
+                  className="text-zinc-500 hover:text-zinc-300"
+                >
+                  Clear
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
 
-      {/* Batch Upload */}
-      <div className="flex flex-wrap gap-3 items-center">
-        <input
-          ref={fileInputRef}
-          className="flex-1 cursor-pointer min-w-[300px] px-4 py-3 rounded-xl bg-white/5 backdrop-blur-xl border border-white/10 text-white file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-medium file:bg-white/10 file:text-white hover:file:bg-white/20 file:cursor-pointer file:transition-all"
-          type="file"
-          accept=".txt"
+        <div
+          className="hidden sm:block w-px h-8 bg-zinc-700/80 shrink-0"
+          aria-hidden
         />
-        <Button variant="design-review" onClick={uploadList}>
-          <HugeiconsIcon icon={Download05Icon} size={23} />
-          Batch Download
-        </Button>
-        <Button variant="in-review" onClick={clearDownloads}>
-          <HugeiconsIcon icon={Delete01Icon} size={23} />
-          Clear downloads
-        </Button>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".txt"
+            className="hidden"
+            id="batch-file"
+            onChange={uploadList}
+          />
+          <Button variant="archived">
+            <label
+              htmlFor="batch-file"
+              className="cursor-pointer inline-flex items-center justify-center gap-2"
+            >
+              <HugeiconsIcon icon={Download05Icon} size={20} />
+              Batch link .txt
+            </label>
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={clearDownloads}
+            className="text-zinc-500 hover:text-red-400"
+          >
+            <HugeiconsIcon icon={Delete01Icon} size={20} />
+            Clear all
+          </Button>
+        </div>
       </div>
     </div>
   );

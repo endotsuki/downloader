@@ -36,18 +36,16 @@ export function TablePagination({
   const endItem = Math.min(currentPage * rowsPerPage, totalItems);
 
   return (
-    <div className="flex gap-4 items-center justify-between flex-wrap">
-      {/* Rows per page selector */}
+    <div className="flex flex-wrap items-center justify-between gap-4">
       <div className="flex items-center gap-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="design-review" className="gap-2">
-              <span className="text-gray-400">Show:</span>
-              <span className="font-semibold">{rowsPerPage}</span>
+            <Button variant="archived" className="gap-2 text-zinc-400">
+              Show <span className="font-semibold text-zinc-200">{rowsPerPage}</span>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-40">
-            <DropdownMenuLabel>Rows per page</DropdownMenuLabel>
+          <DropdownMenuContent align="start" className="w-36">
+            <DropdownMenuLabel className="text-zinc-500">Rows per page</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {[25, 50, 100, 200].map((value) => (
               <DropdownMenuItem
@@ -56,22 +54,16 @@ export function TablePagination({
                 className="flex justify-between"
               >
                 {value}
-                {rowsPerPage === value && (
-                  <span className="text-emerald-400">✓</span>
-                )}
+                {rowsPerPage === value && <span className="text-emerald-400">✓</span>}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
-
-        {/* Items info */}
-        <span className="text-sm text-gray-400 hidden sm:block">
+        <span className="text-sm text-zinc-500 hidden sm:inline">
           {totalItems > 0 ? (
             <>
-              Showing{" "}
-              <span className="text-white font-medium">{startItem}</span> to{" "}
-              <span className="text-white font-medium">{endItem}</span> of{" "}
-              <span className="text-white font-medium">{totalItems}</span> items
+              <span className="text-zinc-400">{startItem}</span>–<span className="text-zinc-400">{endItem}</span> of{" "}
+              <span className="text-zinc-400 font-medium">{totalItems}</span>
             </>
           ) : (
             "No items"
@@ -79,36 +71,29 @@ export function TablePagination({
         </span>
       </div>
 
-      {/* Page navigation */}
       <div className="flex items-center gap-2">
         <Button
           variant="archived"
           onClick={() => setCurrentPage(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="p-3"
+          className="h-9 px-3"
         >
           <HugeiconsIcon size={16} icon={ArrowLeft01Icon} />
-          <span className="hidden sm:inline">Previous</span>
+          <span className="hidden sm:inline ml-1">Previous</span>
         </Button>
-
-        <div className="flex items-center gap-1 p-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-xl">
-          <span className="text-sm text-gray-400">Page</span>
-          <span className="text-sm text-blue-500 font-semibold mx-1">
-            {currentPage}
-          </span>
-          <span className="text-sm text-gray-400">of</span>
-          <span className="text-sm text-white font-semibold ml-1">
-            {totalPages}
-          </span>
+        <div className="flex h-9 items-center gap-1.5 rounded-lg border border-zinc-700/80 bg-zinc-800/50 px-3 text-sm">
+          <span className="text-zinc-500">Page</span>
+          <span className="font-medium text-zinc-200">{currentPage}</span>
+          <span className="text-zinc-500">/</span>
+          <span className="font-medium text-zinc-400">{totalPages}</span>
         </div>
-
         <Button
           variant="archived"
           onClick={() => setCurrentPage(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="p-3"
+          className="h-9 px-3"
         >
-          <span className="hidden sm:inline">Next</span>
+          <span className="hidden sm:inline mr-1">Next</span>
           <HugeiconsIcon size={16} icon={ArrowRight01Icon} />
         </Button>
       </div>

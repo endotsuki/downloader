@@ -5,7 +5,8 @@ import { StatsCards } from "./StatusCards";
 import { DownloadTable } from "./DownloadTable";
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "https://handsome-susana-laxa-6d48f7a6.koyeb.app/";
+  import.meta.env.VITE_API_URL ||
+  "https://handsome-susana-laxa-6d48f7a6.koyeb.app/";
 
 export interface DownloadItem {
   id: number;
@@ -68,7 +69,7 @@ export default function VideoDownloader() {
             // Write to selected directory using File System Access API
             const fileHandle = await selectedDirectory.getFileHandle(
               item.filename,
-              { create: true },
+              { create: true }
             );
             const writable = await fileHandle.createWritable();
             await writable.write(blob);
