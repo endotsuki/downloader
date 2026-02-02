@@ -2,33 +2,26 @@ interface ProgressBarProps {
   progress: number;
 }
 
+function getBarColor(progress: number) {
+  if (progress === 100) return "bg-emerald-500";
+  if (progress >= 75) return "bg-blue-500";
+  if (progress >= 50) return "bg-cyan-500";
+  if (progress >= 25) return "bg-amber-500";
+  return "bg-zinc-600";
+}
+
 export function ProgressBar({ progress }: ProgressBarProps) {
-  const getProgressColor = () => {
-    if (progress === 100) return "bg-emerald-500";
-    if (progress >= 75) return "bg-blue-500";
-    if (progress >= 50) return "bg-cyan-500";
-    if (progress >= 25) return "bg-amber-500";
-    return "bg-gray-500";
-  };
-
   return (
-    <div className="flex items-center gap-3">
-      <div className="flex-1 max-w-[200px]">
-        <div className="relative h-2 bg-white/10 rounded-full overflow-hidden">
-          {/* Progress bar */}
-          <div
-            className={`relative h-full ${getProgressColor()} rounded-full transition-all duration-300 shadow-lg`}
-            style={{ width: `${progress.toFixed(1)}%` }}
-          >
-            {/* Shine effect */}
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer" />
-          </div>
-        </div>
+    <div className="flex items-center gap-3 w-full min-w-[180px]">
+      <div className="flex-1 min-w-0 h-2 rounded-full bg-zinc-700/80 overflow-hidden">
+        <div
+          className={`h-full rounded-full transition-all duration-300 ${getBarColor(progress)}`}
+          style={{ width: `${Math.min(100, progress)}%` }}
+        />
       </div>
-
-      <div className="text-xs text-gray-400 min-w-[45px] text-right font-medium tabular-nums">
-        {progress.toFixed(1)}%
-      </div>
+      <span className="text-xs font-medium tabular-nums text-zinc-500 shrink-0 w-10 text-right">
+        {progress.toFixed(0)}%
+      </span>
     </div>
   );
 }

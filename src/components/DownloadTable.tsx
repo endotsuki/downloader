@@ -25,68 +25,66 @@ export function DownloadTable({
   };
 
   const totalPages = Math.max(1, Math.ceil(queue.length / rowsPerPage));
+  const paginated = paginate(queue);
 
   return (
     <div className="space-y-4">
-      {/* Table Container with Shadow */}
-      <div className="rounded-2xl border border-white/10 overflow-hidden shadow-lg">
+      <div className="rounded-xl border border-zinc-800/80 overflow-hidden bg-zinc-900/40">
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse min-w-[860px]">
-            {/* Table Header */}
+          <table className="w-full border-collapse table-fixed" style={{ minWidth: 920 }}>
+            <colgroup>
+              <col style={{ width: "48px" }} />
+              <col style={{ width: "72px" }} />
+              <col style={{ width: "42%" }} />
+              <col style={{ width: "260px" }} />
+              <col style={{ width: "88px" }} />
+              <col style={{ width: "112px" }} />
+            </colgroup>
             <thead>
-              <tr className="bg-gradient-to-r from-white/10 via-white/5 to-white/10 backdrop-blur-xl">
-                <th className="text-left text-xs font-semibold uppercase tracking-wider text-gray-300 p-4 border-b border-white/10">
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 flex items-center justify-center bg-white/10 rounded-lg text-[10px]">
-                      #
-                    </span>
-                    ID
-                  </div>
+              <tr className="border-b border-zinc-800 bg-zinc-800/60">
+                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                  #
                 </th>
-                <th className="text-left text-xs font-semibold uppercase tracking-wider text-gray-300 p-4 border-b border-white/10">
+                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Platform
                 </th>
-                <th className="text-left text-xs font-semibold uppercase tracking-wider text-gray-300 p-4 border-b border-white/10">
+                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   URL
                 </th>
-                <th className="text-left text-xs font-semibold uppercase tracking-wider text-gray-300 p-4 border-b border-white/10">
+                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Progress
                 </th>
-                <th className="text-left text-xs font-semibold uppercase tracking-wider text-gray-300 p-4 border-b border-white/10">
+                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                  Size
+                </th>
+                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Status
                 </th>
               </tr>
             </thead>
-
-            {/* Table Body */}
-            <tbody className="bg-white/[0.02] backdrop-blur-xl divide-y divide-white/5">
-              {paginate(queue).length === 0 ? (
+            <tbody className="divide-y divide-zinc-800/80">
+              {paginated.length === 0 ? (
                 <tr>
-                  <td
-                    colSpan={5}
-                    className="p-12 text-center text-gray-400 text-sm"
-                  >
+                  <td colSpan={6} className="py-16 px-4 text-center">
                     <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-700/60 text-zinc-500">
                         <HugeiconsIcon icon={Download01Icon} size={24} />
                       </div>
                       <div>
-                        <p className="font-medium text-white mb-1">
-                          No downloads yet
-                        </p>
-                        <p className="text-sm text-gray-500">
-                          Paste a URL above to start downloading
+                        <p className="font-medium text-zinc-300">No downloads yet</p>
+                        <p className="mt-0.5 text-sm text-zinc-500">
+                          Paste a URL above to start
                         </p>
                       </div>
                     </div>
                   </td>
                 </tr>
               ) : (
-                paginate(queue).map((item: DownloadItem, idx: number) => (
+                paginated.map((item, idx) => (
                   <TableRow
                     key={item.id}
                     item={item}
-                    index={idx + 1 + (currentPage - 1) * rowsPerPage}
+                    index={idx + (currentPage - 1) * rowsPerPage}
                   />
                 ))
               )}
@@ -95,7 +93,6 @@ export function DownloadTable({
         </div>
       </div>
 
-      {/* Pagination */}
       <TablePagination
         currentPage={currentPage}
         totalPages={totalPages}

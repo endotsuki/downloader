@@ -17,68 +17,53 @@ type PlatformIcon =
 export function TableRow({ item, index }: TableRowProps) {
   const getPlatformIcon = (url: string): PlatformIcon => {
     const urlLower = url.toLowerCase();
-
-    if (urlLower.includes("youtube") || urlLower.includes("youtu.be")) {
+    if (urlLower.includes("youtube") || urlLower.includes("youtu.be"))
       return { type: "iconza", name: "YouTube" };
-    }
-    if (urlLower.includes("facebook")) {
-      return { type: "iconza", name: "FacebookSquare" };
-    }
-    if (urlLower.includes("tiktok")) {
-      return { type: "iconza", name: "TikTokFill" };
-    }
-    if (urlLower.includes("instagram")) {
-      return { type: "iconza", name: "Instagram" };
-    }
-    if (urlLower.includes("pin")) {
-      return { type: "iconza", name: "Pinterest" };
-    }
+    if (urlLower.includes("facebook")) return { type: "iconza", name: "FacebookSquare" };
+    if (urlLower.includes("tiktok")) return { type: "iconza", name: "TikTokFill" };
+    if (urlLower.includes("instagram")) return { type: "iconza", name: "Instagram" };
+    if (urlLower.includes("pin")) return { type: "iconza", name: "Pinterest" };
     return { type: "hugeicons", icon: Link01Icon };
   };
 
   const platformIcon = getPlatformIcon(item.url);
 
   return (
-    <tr className="hover:bg-white/5 transition-all duration-200 group">
-      <td className="p-4 border-b border-white/5">
-        <div className="flex items-center gap-3">
-          <span className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-lg text-base font-medium text-gray-300 group-hover:bg-white/10 transition-colors">
-            {index + 1}
-          </span>
+    <tr className="transition-colors hover:bg-zinc-800/50">
+      <td className="py-3 px-4 align-middle">
+        <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-700/60 text-xs font-medium text-zinc-400 tabular-nums">
+          {index + 1}
+        </span>
+      </td>
+      <td className="py-3 px-4 align-middle">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-700/60 text-zinc-400">
+          {platformIcon.type === "iconza" ? (
+            <Icon name={platformIcon.name} size={22} />
+          ) : (
+            <HugeiconsIcon icon={platformIcon.icon} size={22} />
+          )}
         </div>
       </td>
-
-      <td className="p-4 border-b border-white/5">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 flex items-center justify-center bg-white/5 rounded-xl group-hover:bg-white/10 transition-colors">
-            {platformIcon.type === "iconza" ? (
-              <Icon name={platformIcon.name} size={26} />
-            ) : (
-              <HugeiconsIcon icon={platformIcon.icon} size={26} />
-            )}
-          </div>
-        </div>
+      <td className="py-3 px-4 align-middle min-w-0">
+        <a
+          href={item.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block truncate text-sm text-zinc-400 hover:text-blue-400 transition-colors hover:underline max-w-full"
+          title={item.url}
+        >
+          {item.url}
+        </a>
       </td>
-
-      <td className="p-4 border-b border-white/5">
-        <div className="max-w-[400px]">
-          <a
-            href={item.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block truncate text-gray-300 text-sm group-hover:text-white transition-colors hover:underline"
-            title={item.url}
-          >
-            {item.url}
-          </a>
-        </div>
-      </td>
-
-      <td className="p-4 border-b border-white/5">
+      <td className="py-3 px-4 align-middle">
         <ProgressBar progress={item.progress ?? 0} />
       </td>
-
-      <td className="p-4 border-b border-white/5">
+      <td className="py-3 px-4 align-middle">
+        <span className="text-sm tabular-nums text-zinc-500">
+          {item.size ?? "—"}
+        </span>
+      </td>
+      <td className="py-3 px-4 align-middle">
         <StatusBadge status={item.status} />
       </td>
     </tr>
