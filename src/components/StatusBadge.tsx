@@ -1,7 +1,7 @@
 import {
   AnonymousIcon,
   Cancel01Icon,
-  Download01Icon,
+  Loading03Icon,
   HourglassIcon,
   Link05Icon,
   Rocket01Icon,
@@ -38,7 +38,7 @@ export function StatusBadge({ status }: StatusBadgeProps) {
           bg: "bg-amber-500/20",
           text: "text-amber-300",
           border: "border-amber-500/30",
-          icon: Download01Icon,
+          icon: Loading03Icon,
         };
       case "merging":
         return {
@@ -74,11 +74,15 @@ export function StatusBadge({ status }: StatusBadgeProps) {
   // const style = getStatusStyle(status);
   const style = getStatusStyle(status);
 
+  const isDownloading = status.toLowerCase() === "downloading";
+
   return (
     <span
       className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium border ${style.bg} ${style.text} ${style.border} backdrop-blur-sm`}
     >
-      <HugeiconsIcon icon={style.icon} size={16} />
+      <span className={`flex items-center ${isDownloading ? "animate-spin" : ""}`}>
+        <HugeiconsIcon icon={style.icon} size={16} />
+      </span>
       {status}
     </span>
   );

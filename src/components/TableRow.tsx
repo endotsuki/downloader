@@ -2,7 +2,7 @@ import { Icon } from "iconza";
 import type { DownloadItem } from "./App";
 import { StatusBadge } from "./StatusBadge";
 import { HugeiconsIcon } from "@hugeicons/react";
-import { Link01Icon } from "@hugeicons/core-free-icons";
+import { Alert02Icon } from "@hugeicons/core-free-icons";
 import { ProgressBar } from "./Progressbar";
 
 interface TableRowProps {
@@ -12,7 +12,7 @@ interface TableRowProps {
 
 type PlatformIcon =
   | { type: "iconza"; name: string }
-  | { type: "hugeicons"; icon: typeof Link01Icon };
+  | { type: "hugeicons"; icon: typeof Alert02Icon };
 
 export function TableRow({ item, index }: TableRowProps) {
   const getPlatformIcon = (url: string): PlatformIcon => {
@@ -26,7 +26,7 @@ export function TableRow({ item, index }: TableRowProps) {
     if (urlLower.includes("instagram"))
       return { type: "iconza", name: "Instagram" };
     if (urlLower.includes("pin")) return { type: "iconza", name: "Pinterest" };
-    return { type: "hugeicons", icon: Link01Icon };
+    return { type: "hugeicons", icon: Alert02Icon };
   };
 
   const platformIcon = getPlatformIcon(item.url);
@@ -43,7 +43,7 @@ export function TableRow({ item, index }: TableRowProps) {
           {platformIcon.type === "iconza" ? (
             <Icon name={platformIcon.name} size={22} />
           ) : (
-            <HugeiconsIcon icon={platformIcon.icon} size={22} />
+            <HugeiconsIcon icon={platformIcon.icon} size={22} className="bg-yellow-500 text-black rounded" />
           )}
         </div>
       </td>

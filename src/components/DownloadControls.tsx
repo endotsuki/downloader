@@ -6,6 +6,7 @@ import {
   Download01Icon,
   Download05Icon,
   Folder01Icon,
+  Folder02Icon,
 } from "@hugeicons/core-free-icons";
 
 interface DownloadControlsProps {
@@ -90,8 +91,9 @@ export function DownloadControls({
               className={`flex items-center min-h-[40px] ${inputBase} text-zinc-400 cursor-default`}
             >
               {selectedDirectory ? (
-                <span className="truncate text-emerald-400/90">
-                  {selectedDirectory.name}
+                <span className="truncate flex items-center text-emerald-400/90">
+                  <HugeiconsIcon icon={Folder01Icon} size={20} className="fill-yellow-500 text-transparent mr-1" />
+                   {selectedDirectory.name}
                 </span>
               ) : (
                 <span>Browser default</span>
@@ -99,7 +101,7 @@ export function DownloadControls({
             </div>
             <div className="flex gap-2 shrink-0">
               <Button variant="design-review" onClick={handleSelectDirectory}>
-                <HugeiconsIcon icon={Folder01Icon} size={20} />
+                <HugeiconsIcon icon={Folder02Icon} size={20} />
                 Folder
               </Button>
               {selectedDirectory && (
