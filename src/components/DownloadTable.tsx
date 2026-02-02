@@ -31,13 +31,15 @@ export function DownloadTable({
     <div className="space-y-4">
       <div className="rounded-xl border border-zinc-800/80 overflow-hidden bg-zinc-900/40">
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse table-fixed" style={{ minWidth: 920 }}>
+          <table
+            className="w-full border-collapse table-fixed"
+            style={{ minWidth: 920 }}
+          >
             <colgroup>
               <col style={{ width: "48px" }} />
               <col style={{ width: "72px" }} />
               <col style={{ width: "42%" }} />
               <col style={{ width: "260px" }} />
-              <col style={{ width: "88px" }} />
               <col style={{ width: "112px" }} />
             </colgroup>
             <thead>
@@ -55,9 +57,6 @@ export function DownloadTable({
                   Progress
                 </th>
                 <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
-                  Size
-                </th>
-                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Status
                 </th>
               </tr>
@@ -71,7 +70,9 @@ export function DownloadTable({
                         <HugeiconsIcon icon={Download01Icon} size={24} />
                       </div>
                       <div>
-                        <p className="font-medium text-zinc-300">No downloads yet</p>
+                        <p className="font-medium text-zinc-300">
+                          No downloads yet
+                        </p>
                         <p className="mt-0.5 text-sm text-zinc-500">
                           Paste a URL above to start
                         </p>

@@ -19,9 +19,12 @@ export function TableRow({ item, index }: TableRowProps) {
     const urlLower = url.toLowerCase();
     if (urlLower.includes("youtube") || urlLower.includes("youtu.be"))
       return { type: "iconza", name: "YouTube" };
-    if (urlLower.includes("facebook")) return { type: "iconza", name: "FacebookSquare" };
-    if (urlLower.includes("tiktok")) return { type: "iconza", name: "TikTokFill" };
-    if (urlLower.includes("instagram")) return { type: "iconza", name: "Instagram" };
+    if (urlLower.includes("facebook"))
+      return { type: "iconza", name: "FacebookSquare" };
+    if (urlLower.includes("tiktok"))
+      return { type: "iconza", name: "TikTokFill" };
+    if (urlLower.includes("instagram"))
+      return { type: "iconza", name: "Instagram" };
     if (urlLower.includes("pin")) return { type: "iconza", name: "Pinterest" };
     return { type: "hugeicons", icon: Link01Icon };
   };
@@ -57,11 +60,6 @@ export function TableRow({ item, index }: TableRowProps) {
       </td>
       <td className="py-3 px-4 align-middle">
         <ProgressBar progress={item.progress ?? 0} />
-      </td>
-      <td className="py-3 px-4 align-middle">
-        <span className="text-sm tabular-nums text-zinc-500">
-          {item.size ?? "—"}
-        </span>
       </td>
       <td className="py-3 px-4 align-middle">
         <StatusBadge status={item.status} />
