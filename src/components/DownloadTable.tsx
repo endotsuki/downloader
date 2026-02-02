@@ -44,19 +44,19 @@ export function DownloadTable({
             </colgroup>
             <thead>
               <tr className="border-b border-zinc-800 bg-zinc-800/60">
-                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                <th className="text-left text-sm font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   #
                 </th>
-                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                <th className="text-left text-sm font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Platform
                 </th>
-                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                <th className="text-left text-sm font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   URL
                 </th>
-                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                <th className="text-left text-sm font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Progress
                 </th>
-                <th className="text-left text-[11px] font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
+                <th className="text-left text-sm font-semibold uppercase tracking-wider text-zinc-500 py-3.5 px-4">
                   Status
                 </th>
               </tr>
@@ -64,7 +64,7 @@ export function DownloadTable({
             <tbody className="divide-y divide-zinc-800/80">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-16 px-4 text-center">
+                  <td colSpan={5} className="py-16 px-4 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-zinc-700/60 text-zinc-500">
                         <HugeiconsIcon icon={Download01Icon} size={24} />

@@ -41,11 +41,14 @@ export function TablePagination({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="archived" className="gap-2 text-zinc-400">
-              Show <span className="font-semibold text-zinc-200">{rowsPerPage}</span>
+              Show{" "}
+              <span className="font-semibold text-zinc-200">{rowsPerPage}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-36">
-            <DropdownMenuLabel className="text-zinc-500">Rows per page</DropdownMenuLabel>
+            <DropdownMenuLabel className="text-zinc-500">
+              Rows per page
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {[25, 50, 100, 200].map((value) => (
               <DropdownMenuItem
@@ -54,7 +57,9 @@ export function TablePagination({
                 className="flex justify-between"
               >
                 {value}
-                {rowsPerPage === value && <span className="text-emerald-400">✓</span>}
+                {rowsPerPage === value && (
+                  <span className="text-emerald-400">✓</span>
+                )}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
@@ -62,7 +67,8 @@ export function TablePagination({
         <span className="text-sm text-zinc-500 hidden sm:inline">
           {totalItems > 0 ? (
             <>
-              <span className="text-zinc-400">{startItem}</span>–<span className="text-zinc-400">{endItem}</span> of{" "}
+              <span className="text-zinc-400">{startItem}</span>–
+              <span className="text-zinc-400">{endItem}</span> of{" "}
               <span className="text-zinc-400 font-medium">{totalItems}</span>
             </>
           ) : (
@@ -83,7 +89,7 @@ export function TablePagination({
         </Button>
         <div className="flex h-9 items-center gap-1.5 rounded-lg border border-zinc-700/80 bg-zinc-800/50 px-3 text-sm">
           <span className="text-zinc-500">Page</span>
-          <span className="font-medium text-zinc-200">{currentPage}</span>
+          <span className="font-medium text-blue-500">{currentPage}</span>
           <span className="text-zinc-500">/</span>
           <span className="font-medium text-zinc-400">{totalPages}</span>
         </div>
