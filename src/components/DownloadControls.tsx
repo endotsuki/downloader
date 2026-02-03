@@ -1,13 +1,7 @@
-import type { RefObject } from "react";
-import { Button } from "../ui/button";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Delete01Icon,
-  Download01Icon,
-  Download05Icon,
-  Folder01Icon,
-  Folder02Icon,
-} from "@hugeicons/core-free-icons";
+import type { RefObject } from 'react';
+import { Button } from '../ui/button';
+import { HugeiconsIcon } from '@hugeicons/react';
+import { Delete01Icon, Download01Icon, Download05Icon, Folder01Icon, Folder02Icon } from '@hugeicons/core-free-icons';
 
 interface DownloadControlsProps {
   videoLink: string;
@@ -21,7 +15,7 @@ interface DownloadControlsProps {
 }
 
 const inputBase =
-  "w-full rounded-lg border border-zinc-700/80 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition-colors focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20";
+  'w-full rounded-lg border border-zinc-700/80 bg-zinc-800/50 px-3.5 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none transition-colors focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/20';
 
 export function DownloadControls({
   videoLink,
@@ -34,46 +28,38 @@ export function DownloadControls({
   fileInputRef,
 }: DownloadControlsProps) {
   const handleSelectDirectory = async () => {
-    if (!("showDirectoryPicker" in window)) {
-      alert(
-        "Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera."
-      );
+    if (!('showDirectoryPicker' in window)) {
+      alert('Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera.');
       return;
     }
     try {
       const directoryHandle = await (window as any).showDirectoryPicker({
-        mode: "readwrite",
+        mode: 'readwrite',
       });
       setSelectedDirectory(directoryHandle);
     } catch (error: any) {
-      if (error.name !== "AbortError") {
-        console.error("Error selecting directory:", error);
-        alert("Failed to select directory. Please try again.");
+      if (error.name !== 'AbortError') {
+        console.error('Error selecting directory:', error);
+        alert('Failed to select directory. Please try again.');
       }
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className='space-y-6'>
       {/* Primary: URL + Download */}
       <div>
-        <label className="mb-1.5 block text-xs font-medium uppercase tracking-wider text-zinc-500">
-          Single URL
-        </label>
-        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+        <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500'>Single URL</label>
+        <div className='flex flex-col gap-2 sm:flex-row sm:gap-3'>
           <input
-            className={`flex-1 min-w-0 ${inputBase}`}
-            type="text"
-            placeholder="Paste video URL…"
+            className={`min-w-0 flex-1 ${inputBase}`}
+            type='text'
+            placeholder='Paste video URL…'
             value={videoLink}
             onChange={(e) => setVideoLink(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && queueSingle()}
+            onKeyDown={(e) => e.key === 'Enter' && queueSingle()}
           />
-          <Button
-            variant="on-hold"
-            onClick={queueSingle}
-            className="shrink-0 sm:w-auto"
-          >
+          <Button variant='on-hold' onClick={queueSingle} className='shrink-0 sm:w-auto'>
             <HugeiconsIcon icon={Download01Icon} size={20} />
             Download
           </Button>
@@ -81,36 +67,32 @@ export function DownloadControls({
       </div>
 
       {/* Secondary: Folder, Batch, Clear */}
-      <div className="flex flex-col py-9 sm:flex-row sm:items-center gap-4 border-t border-zinc-800/80">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-          <span className="text-xs font-medium uppercase tracking-wider text-zinc-500 shrink-0">
-            Save to
-          </span>
-          <div className="flex flex-col sm:flex-row gap-2 flex-1 min-w-0">
-            <div
-              className={`flex items-center min-h-[40px] ${inputBase} text-zinc-400 cursor-default`}
-            >
+      <div className='flex flex-col gap-4 border-t border-zinc-800/80 py-9 sm:flex-row sm:items-center'>
+        <div className='flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3'>
+          <span className='shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-500'>Save to</span>
+          <div className='flex min-w-0 flex-1 flex-col gap-2 sm:flex-row'>
+            <div className={`flex min-h-[40px] items-center ${inputBase} cursor-default text-zinc-400`}>
               {selectedDirectory ? (
-                <span className="truncate flex items-center text-emerald-400/90">
-                  <HugeiconsIcon icon={Folder01Icon} size={20} className="fill-yellow-500 text-transparent mr-1" />
-                   {selectedDirectory.name}
+                <span className='flex items-center truncate text-emerald-400/90'>
+                  <HugeiconsIcon icon={Folder01Icon} size={20} className='mr-1 fill-yellow-500 text-transparent' />
+                  {selectedDirectory.name}
                 </span>
               ) : (
                 <span>Browser default</span>
               )}
             </div>
-            <div className="flex gap-2 shrink-0">
-              <Button variant="design-review" onClick={handleSelectDirectory}>
+            <div className='flex shrink-0 gap-2'>
+              <Button variant='outline' onClick={handleSelectDirectory}>
                 <HugeiconsIcon icon={Folder02Icon} size={20} />
                 Folder
               </Button>
               {selectedDirectory && (
                 <Button
-                  variant="ghost"
-                  size="sm"
+                  variant='ghost'
                   onClick={() => setSelectedDirectory(null)}
-                  className="text-zinc-500 hover:text-zinc-300"
+                  className='flex items-center text-zinc-500 hover:text-red-400'
                 >
+                  <HugeiconsIcon icon={Delete01Icon} size={20} />
                   Clear
                 </Button>
               )}
@@ -118,34 +100,17 @@ export function DownloadControls({
           </div>
         </div>
 
-        <div
-          className="hidden sm:block w-px h-8 bg-zinc-700/80 shrink-0"
-          aria-hidden
-        />
+        <div className='hidden h-8 w-px shrink-0 bg-zinc-700/80 sm:block' aria-hidden />
 
-        <div className="flex flex-wrap items-center gap-2">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".txt"
-            className="hidden"
-            id="batch-file"
-            onChange={uploadList}
-          />
-          <Button variant="archived">
-            <label
-              htmlFor="batch-file"
-              className="cursor-pointer inline-flex items-center justify-center gap-2"
-            >
+        <div className='flex flex-wrap items-center gap-2'>
+          <input ref={fileInputRef} type='file' accept='.txt' className='hidden' id='batch-file' onChange={uploadList} />
+          <Button variant='archived'>
+            <label htmlFor='batch-file' className='inline-flex cursor-pointer items-center justify-center gap-2'>
               <HugeiconsIcon icon={Download05Icon} size={20} />
               Batch link .txt
             </label>
           </Button>
-          <Button
-            variant="ghost"
-            onClick={clearDownloads}
-            className="text-zinc-500 hover:text-red-400"
-          >
+          <Button variant='ghost' onClick={clearDownloads} className='flex items-center text-zinc-500 hover:text-red-400'>
             <HugeiconsIcon icon={Delete01Icon} size={20} />
             Clear all
           </Button>

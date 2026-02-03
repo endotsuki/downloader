@@ -1,12 +1,10 @@
-import { useState, useEffect, useRef } from "react";
-import { PageHeader } from "./PageHeader";
-import { DownloadControls } from "./DownloadControls";
-import { StatsCards } from "./StatusCards";
-import { DownloadTable } from "./DownloadTable";
+import { useState, useEffect, useRef } from 'react';
+import { PageHeader } from './PageHeader';
+import { DownloadControls } from './DownloadControls';
+import { StatsCards } from './StatusCards';
+import { DownloadTable } from './DownloadTable';
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL ||
-  "https://handsome-susana-laxa-6d48f7a6.koyeb.app/";
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://handsome-susana-laxa-6d48f7a6.koyeb.app/';
 
 export interface DownloadItem {
   id: number;
@@ -27,9 +25,8 @@ export interface StatsData {
 }
 
 export default function VideoDownloader() {
-  const [videoLink, setVideoLink] = useState("");
-  const [selectedDirectory, setSelectedDirectory] =
-    useState<FileSystemDirectoryHandle | null>(null);
+  const [videoLink, setVideoLink] = useState('');
+  const [selectedDirectory, setSelectedDirectory] = useState<FileSystemDirectoryHandle | null>(null);
   const [stats, setStats] = useState<StatsData>({
     total: 0,
     completed: 0,
@@ -50,11 +47,7 @@ export default function VideoDownloader() {
   // Auto-download when items become completed
   useEffect(() => {
     stats.queue.forEach(async (item) => {
-      if (
-        item.status === "Completed" &&
-        item.filename &&
-        !downloadedItemsRef.current.has(item.id)
-      ) {
+      if (item.status === 'Completed' && item.filename && !downloadedItemsRef.current.has(item.id)) {
         downloadedItemsRef.current.add(item.id);
 
         // If user selected a directory, write directly to it
@@ -62,22 +55,19 @@ export default function VideoDownloader() {
           try {
             // Fetch the file from server
             const response = await fetch(`${API_BASE_URL}/download/${item.id}`);
-            if (!response.ok) throw new Error("Failed to fetch file");
+            if (!response.ok) throw new Error('Failed to fetch file');
 
             const blob = await response.blob();
 
             // Write to selected directory using File System Access API
-            const fileHandle = await selectedDirectory.getFileHandle(
-              item.filename,
-              { create: true }
-            );
+            const fileHandle = await selectedDirectory.getFileHandle(item.filename, { create: true });
             const writable = await fileHandle.createWritable();
             await writable.write(blob);
             await writable.close();
 
             console.log(`✓ Saved to selected folder: ${item.filename}`);
           } catch (error) {
-            console.error("Error saving to selected directory:", error);
+            console.error('Error saving to selected directory:', error);
             // Fallback to browser download
             triggerBrowserDownload(item.id, item.filename);
           }
@@ -91,10 +81,10 @@ export default function VideoDownloader() {
 
   const triggerBrowserDownload = (itemId: number, filename: string) => {
     const downloadUrl = `${API_BASE_URL}/download/${itemId}`;
-    const link = document.createElement("a");
+    const link = document.createElement('a');
     link.href = downloadUrl;
     link.download = filename;
-    link.style.display = "none";
+    link.style.display = 'none';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -106,80 +96,80 @@ export default function VideoDownloader() {
       const data = await response.json();
       setStats(data);
     } catch (error) {
-      console.error("Failed to fetch status:", error);
+      console.error('Failed to fetch status:', error);
     }
   };
 
   const queueSingle = async () => {
     const link = videoLink.trim();
     if (!link) {
-      alert("Please enter a link");
+      alert('Please enter a link');
       return;
     }
 
     try {
       const response = await fetch(`${API_BASE_URL}/queue`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({ urls: [link] }),
       });
       const data = await response.json();
       setStats(data);
-      setVideoLink("");
+      setVideoLink('');
     } catch (error) {
-      console.error("Failed to queue download:", error);
+      console.error('Failed to queue download:', error);
     }
   };
 
   const uploadList = async () => {
     const file = fileInputRef.current?.files?.[0];
     if (!file) {
-      alert("Choose .txt file");
+      alert('Choose .txt file');
       return;
     }
 
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
 
     try {
       const response = await fetch(`${API_BASE_URL}/upload`, {
-        method: "POST",
+        method: 'POST',
         body: formData,
       });
       const data = await response.json();
       setStats(data);
       if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+        fileInputRef.current.value = '';
       }
     } catch (error) {
-      console.error("Failed to upload file:", error);
+      console.error('Failed to upload file:', error);
     }
   };
 
   const clearDownloads = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/clear`, {
-        method: "POST",
+        method: 'POST',
       });
       const data = await response.json();
       setStats(data);
       setCurrentPage(1); // Reset to first page after clearing
     } catch (error) {
-      console.error("Failed to clear downloads:", error);
+      console.error('Failed to clear downloads:', error);
     }
   };
 
-  const queuedCount = stats.queue.filter((q) => q.status === "Queued").length;
+  const queuedCount = stats.queue.filter((q) => q.status === 'Queued').length;
 
   return (
-    <div className="min-h-screen bg-[#0a0e17] text-white p-6">
-      <div className="max-w-[1600px] w-[95%] mx-auto">
+    <div className='min-h-screen bg-[#0a0e17] p-6 text-white'>
+      <div className='mx-auto w-[95%] max-w-[1600px]'>
         <PageHeader />
 
         {/* Main Glass Card */}
-        <div className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-6 shadow-2xl shadow-black/20">
+        <div className='rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl'>
           <DownloadControls
             videoLink={videoLink}
             setVideoLink={setVideoLink}
@@ -191,12 +181,7 @@ export default function VideoDownloader() {
             fileInputRef={fileInputRef}
           />
 
-          <StatsCards
-            total={stats.total}
-            completed={stats.completed}
-            downloading={stats.downloading}
-            queued={queuedCount}
-          />
+          <StatsCards total={stats.total} completed={stats.completed} downloading={stats.downloading} queued={queuedCount} />
 
           <DownloadTable
             queue={stats.queue}
@@ -207,17 +192,13 @@ export default function VideoDownloader() {
           />
 
           {/* Footer */}
-          <div className="mt-6 pt-6 border-t border-white/10 text-center">
-            <p className="text-sm text-gray-400">
-              Auto-refresh every{" "}
-              <span className="text-white font-medium">1s</span> • Processing{" "}
-              <span className="text-white font-medium">one by one</span> •
-              Supports{" "}
-              <span className="text-white font-medium">500+ links</span>
+          <div className='mt-6 border-t border-white/10 pt-6 text-center'>
+            <p className='text-sm text-gray-400'>
+              Auto-refresh every <span className='font-medium text-white'>1s</span> • Processing{' '}
+              <span className='font-medium text-white'>one by one</span> • Supports{' '}
+              <span className='font-medium text-white'>500+ links</span>
             </p>
-            <p className="text-sm text-gray-400 mt-2 select-none">
-              &copy; {new Date().getFullYear()} MMO &bull; All rights reserved
-            </p>
+            <p className='mt-2 select-none text-sm text-gray-400'>&copy; {new Date().getFullYear()} MMO &bull; All rights reserved</p>
           </div>
         </div>
       </div>
