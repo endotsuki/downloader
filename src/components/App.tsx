@@ -167,9 +167,6 @@ export default function VideoDownloader() {
     <div className='min-h-screen bg-[#0a0e17] p-6 text-white'>
       <div className='mx-auto w-[95%] max-w-[1600px]'>
         <PageHeader />
-
-        {/* Main Glass Card */}
-        <div className='rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl'>
           <DownloadControls
             videoLink={videoLink}
             setVideoLink={setVideoLink}
@@ -200,7 +197,6 @@ export default function VideoDownloader() {
             </p>
             <p className='mt-2 select-none text-sm text-gray-400'>&copy; {new Date().getFullYear()} MMO &bull; All rights reserved</p>
           </div>
-        </div>
       </div>
     </div>
   );
