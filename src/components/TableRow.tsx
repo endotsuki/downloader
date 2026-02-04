@@ -86,7 +86,7 @@ export function TableRow({ item }: TableRowProps) {
 
   return (
     <div className='group relative flex items-center gap-3 rounded-lg bg-zinc-900/60 p-3 transition-all hover:bg-zinc-800/60'>
-      <div className='relative h-28 w-28 overflow-hidden rounded-xl bg-zinc-800'>
+      <div className='relative h-24 w-24 overflow-hidden rounded-xl bg-zinc-800'>
         {thumbnailLoading ? (
           <div className='flex h-full w-full items-center justify-center'>
             <div className='h-8 w-8 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-400'></div>
