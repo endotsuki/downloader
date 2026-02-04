@@ -1,7 +1,7 @@
 import type { RefObject } from 'react';
 import { Button } from '../ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Delete01Icon, Download01Icon, Download05Icon, Folder01Icon, Folder02Icon } from '@hugeicons/core-free-icons';
+import { Delete01Icon, Download01Icon, Download05Icon, Folder01Icon, Folder02Icon, Task02Icon } from '@hugeicons/core-free-icons';
 
 interface DownloadControlsProps {
   videoLink: string;
@@ -10,7 +10,6 @@ interface DownloadControlsProps {
   setSelectedDirectory: (handle: FileSystemDirectoryHandle | null) => void;
   queueSingle: () => void;
   uploadList: () => void;
-  clearDownloads: () => void;
   fileInputRef: RefObject<HTMLInputElement>;
 }
 
@@ -24,7 +23,6 @@ export function DownloadControls({
   setSelectedDirectory,
   queueSingle,
   uploadList,
-  clearDownloads,
   fileInputRef,
 }: DownloadControlsProps) {
   const handleSelectDirectory = async () => {
@@ -45,20 +43,36 @@ export function DownloadControls({
     }
   };
 
+  const handlePasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      setVideoLink(text);
+    } catch (error) {
+      console.error('Failed to read clipboard:', error);
+    }
+  };
+
   return (
     <div className='space-y-6'>
       {/* Primary: URL + Download */}
       <div>
         <label className='mb-1.5 block text-xs font-semibold uppercase tracking-wider text-zinc-500'>Single URL</label>
-        <div className='flex flex-col gap-2 sm:flex-row sm:gap-3'>
-          <input
-            className={`min-w-0 flex-1 ${inputBase}`}
-            type='text'
-            placeholder='Paste video URL…'
-            value={videoLink}
-            onChange={(e) => setVideoLink(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && queueSingle()}
-          />
+        <div className='relative flex flex-col gap-2 sm:flex-row sm:gap-3'>
+          <div className='relative flex-1'>
+            <input
+              className={`w-full min-w-0 pr-11 ${inputBase}`}
+              type='text'
+              placeholder='Paste video URL…'
+              value={videoLink}
+              onChange={(e) => setVideoLink(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && queueSingle()}
+            />
+            <div className='pointer-events-none absolute right-10 top-1/2 h-6 w-px -translate-y-1/2 bg-zinc-700/80' />
+            <Button variant='ghost' size='icon' onClick={handlePasteFromClipboard} className='absolute right-1 top-1/2 -translate-y-1/2'>
+              <HugeiconsIcon icon={Task02Icon} size={20} />
+            </Button>
+          </div>
+
           <Button variant='on-hold' onClick={queueSingle} className='shrink-0 sm:w-auto'>
             <HugeiconsIcon icon={Download01Icon} size={20} />
             Download
@@ -100,7 +114,7 @@ export function DownloadControls({
           </div>
         </div>
 
-        <div className='hidden h-8 w-px shrink-0 bg-zinc-700/80 sm:block' aria-hidden />
+        <div className='hidden h-8 w-px shrink-0 bg-zinc-700/80 sm:block' />
 
         <div className='flex flex-wrap items-center gap-2'>
           <input ref={fileInputRef} type='file' accept='.txt' className='hidden' id='batch-file' onChange={uploadList} />
@@ -109,10 +123,6 @@ export function DownloadControls({
               <HugeiconsIcon icon={Download05Icon} size={20} />
               Batch link .txt
             </label>
-          </Button>
-          <Button variant='ghost' onClick={clearDownloads} className='flex items-center text-zinc-500 hover:text-red-400'>
-            <HugeiconsIcon icon={Delete01Icon} size={20} />
-            Clear all
           </Button>
         </div>
       </div>

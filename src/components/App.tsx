@@ -167,36 +167,35 @@ export default function VideoDownloader() {
     <div className='min-h-screen bg-[#0a0e17] p-6 text-white'>
       <div className='mx-auto w-[95%] max-w-[1600px]'>
         <PageHeader />
-          <DownloadControls
-            videoLink={videoLink}
-            setVideoLink={setVideoLink}
-            selectedDirectory={selectedDirectory}
-            setSelectedDirectory={setSelectedDirectory}
-            queueSingle={queueSingle}
-            uploadList={uploadList}
-            clearDownloads={clearDownloads}
-            fileInputRef={fileInputRef}
-          />
+        <DownloadControls
+          videoLink={videoLink}
+          setVideoLink={setVideoLink}
+          selectedDirectory={selectedDirectory}
+          setSelectedDirectory={setSelectedDirectory}
+          queueSingle={queueSingle}
+          uploadList={uploadList}
+          fileInputRef={fileInputRef}
+        />
 
-          <StatsCards total={stats.total} completed={stats.completed} downloading={stats.downloading} queued={queuedCount} />
+        <StatsCards total={stats.total} completed={stats.completed} downloading={stats.downloading} queued={queuedCount} />
 
-          <DownloadTable
-            queue={stats.queue}
-            currentPage={currentPage}
-            rowsPerPage={rowsPerPage}
-            setCurrentPage={setCurrentPage}
-            setRowsPerPage={setRowsPerPage}
-          />
+        <DownloadTable
+          queue={stats.queue}
+          currentPage={currentPage}
+          rowsPerPage={rowsPerPage}
+          setCurrentPage={setCurrentPage}
+          clearDownloads={clearDownloads}
+          setRowsPerPage={setRowsPerPage}
+        />
 
-          {/* Footer */}
-          <div className='mt-6 border-t border-white/10 pt-6 text-center'>
-            <p className='text-sm text-gray-400'>
-              Auto-refresh every <span className='font-medium text-white'>1s</span> • Processing{' '}
-              <span className='font-medium text-white'>one by one</span> • Supports{' '}
-              <span className='font-medium text-white'>500+ links</span>
-            </p>
-            <p className='mt-2 select-none text-sm text-gray-400'>&copy; {new Date().getFullYear()} MMO &bull; All rights reserved</p>
-          </div>
+        {/* Footer */}
+        <div className='mt-6 border-t border-white/10 pt-6 text-center'>
+          <p className='text-sm text-gray-400'>
+            Auto-refresh every <span className='font-medium text-white'>1s</span> • Processing{' '}
+            <span className='font-medium text-white'>one by one</span> • Supports <span className='font-medium text-white'>500+ links</span>
+          </p>
+          <p className='mt-2 select-none text-sm text-gray-400'>&copy; {new Date().getFullYear()} MMO &bull; All rights reserved</p>
+        </div>
       </div>
     </div>
   );

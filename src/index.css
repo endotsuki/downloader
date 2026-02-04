@@ -4,8 +4,21 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Define Khmer font */
+@font-face {
+  font-family: 'Inter Khmer';
+  src: url('/fonts/InterKhmerLooped.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  unicode-range: U+1780-17FF, U+19E0-19FF, U+200C-200D, U+25CC;
+  /* U+1780-17FF: Khmer characters
+     U+19E0-19FF: Khmer Symbols
+     U+200C-200D: Zero-width joiners
+     U+25CC: Dotted circle */
+}
+
 body {
-  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-family: 'Inter Khmer', 'Plus Jakarta Sans', sans-serif;
 }
 
 @layer utilities {

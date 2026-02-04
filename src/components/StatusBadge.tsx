@@ -35,9 +35,9 @@ export function StatusBadge({ status }: StatusBadgeProps) {
         };
       case 'downloading':
         return {
-          bg: 'bg-amber-500/20',
-          text: 'text-amber-300',
-          border: 'border-amber-500/30',
+          bg: 'bg-blue-500/20',
+          text: 'text-blue-400',
+          border: 'border-blue-500/30',
           icon: Loading03Icon,
         };
       case 'merging':
@@ -77,11 +77,13 @@ export function StatusBadge({ status }: StatusBadgeProps) {
 
   return (
     <span
-      className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-medium ${style.bg} ${style.text} ${style.border} backdrop-blur-sm`}
+      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium ${style.bg} ${style.text} ${style.border} backdrop-blur-sm`}
     >
-      <span className={`flex items-center ${isDownloading ? 'animate-spin' : ''}`}>
+      {isDownloading ? (
+        <div className='h-4 w-4 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-400'></div>
+      ) : (
         <HugeiconsIcon icon={style.icon} size={16} />
-      </span>
+      )}
       {status}
     </span>
   );

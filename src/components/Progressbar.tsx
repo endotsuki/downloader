@@ -13,7 +13,7 @@ function getBarColor(progress: number) {
 export function ProgressBar({ progress }: ProgressBarProps) {
   return (
     <div className='flex w-full min-w-[180px] items-center gap-3'>
-      <div className='h-2 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-700/80'>
+      <div className='h-1 min-w-0 flex-1 overflow-hidden rounded-full bg-zinc-700/80'>
         <div
           className={`h-full rounded-full transition-all duration-300 ${getBarColor(progress)}`}
           style={{ width: `${Math.min(100, progress)}%` }}

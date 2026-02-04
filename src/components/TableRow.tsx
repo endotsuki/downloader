@@ -4,6 +4,7 @@ import { StatusBadge } from './StatusBadge';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Alert02Icon } from '@hugeicons/core-free-icons';
 import { ProgressBar } from './Progressbar';
+import { useState, useEffect, useRef } from 'react';
 
 interface TableRowProps {
   item: DownloadItem;
@@ -12,7 +13,13 @@ interface TableRowProps {
 
 type PlatformIcon = { type: 'iconza'; name: string } | { type: 'hugeicons'; icon: typeof Alert02Icon };
 
-export function TableRow({ item, index }: TableRowProps) {
+export function TableRow({ item }: TableRowProps) {
+  const [thumbnail, setThumbnail] = useState<string>('');
+  const [title, setTitle] = useState<string>('');
+  const [thumbnailLoading, setThumbnailLoading] = useState(false);
+  const [thumbnailError, setThumbnailError] = useState(false);
+  const fetchedUrls = useRef(new Set<string>()); // Track fetched URLs to prevent reloading
+
   const getPlatformIcon = (url: string): PlatformIcon => {
     const urlLower = url.toLowerCase();
     if (urlLower.includes('youtube') || urlLower.includes('youtu.be')) return { type: 'iconza', name: 'YouTube' };
@@ -23,41 +30,107 @@ export function TableRow({ item, index }: TableRowProps) {
     return { type: 'hugeicons', icon: Alert02Icon };
   };
 
+  const fetchThumbnail = async (url: string) => {
+    // Prevent refetching if already loaded
+    if (fetchedUrls.current.has(url)) {
+      return;
+    }
+
+    setThumbnailLoading(true);
+    setThumbnailError(false);
+
+    try {
+      const response = await fetch('http://localhost:8000/api/thumbnail', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.thumbnail) {
+          setThumbnail(data.thumbnail);
+          setTitle(data.title || '');
+          fetchedUrls.current.add(url); // Mark as fetched
+          setThumbnailLoading(false);
+          return;
+        }
+      }
+
+      setThumbnailError(true);
+      setThumbnailLoading(false);
+    } catch (error) {
+      console.error('Failed to fetch thumbnail:', error);
+      setThumbnailError(true);
+      setThumbnailLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Only fetch if not already fetched
+    if (!fetchedUrls.current.has(item.url)) {
+      fetchThumbnail(item.url);
+    }
+  }, [item.url]);
+
   const platformIcon = getPlatformIcon(item.url);
 
   return (
-    <tr className='transition-colors hover:bg-zinc-800/50'>
-      <td className='px-4 py-3 align-middle'>
-        <span className='inline-flex h-8 w-8 items-center justify-center rounded-lg bg-zinc-700/60 text-xs font-medium tabular-nums text-zinc-400'>
-          {index + 1}
-        </span>
-      </td>
-      <td className='px-4 py-3 align-middle'>
-        <div className='flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-700/60 text-zinc-400'>
+    <div className='group relative flex items-center gap-3 rounded-lg bg-zinc-900/60 p-3 transition-all hover:bg-zinc-800/60'>
+      {/* Thumbnail */}
+      <div className='relative h-28 w-28 overflow-hidden rounded-xl bg-zinc-800'>
+        {thumbnailLoading ? (
+          <div className='flex h-full w-full items-center justify-center'>
+            <div className='h-8 w-8 animate-spin rounded-full border-2 border-zinc-600 border-t-zinc-400'></div>
+          </div>
+        ) : thumbnailError || !thumbnail ? (
+          <div className='flex h-full w-full items-center justify-center bg-zinc-800/80'>
+            <svg className='h-full w-full p-6 text-zinc-600' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                strokeWidth={1.5}
+                d='M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z'
+              />
+            </svg>
+          </div>
+        ) : (
+          <img src={thumbnail} alt='Thumbnail' className='h-full w-full object-cover' onError={() => setThumbnailError(true)} />
+        )}
+
+        {/* Platform Icon Overlay */}
+        <div className='absolute left-1.5 top-1.5 flex h-5 w-5 items-center justify-center'>
           {platformIcon.type === 'iconza' ? (
-            <Icon name={platformIcon.name} size={22} />
+            <Icon name={platformIcon.name} size={23} className='text-white drop-shadow-lg' />
           ) : (
-            <HugeiconsIcon icon={platformIcon.icon} size={22} className='rounded bg-yellow-500 text-black' />
+            <HugeiconsIcon icon={platformIcon.icon} size={23} className='text-yellow-400 drop-shadow-lg' />
           )}
         </div>
-      </td>
-      <td className='min-w-0 px-4 py-3 align-middle'>
-        <a
-          href={item.url}
-          target='_blank'
-          rel='noopener noreferrer'
-          className='block max-w-full truncate text-sm text-zinc-400 transition-colors hover:text-blue-400 hover:underline'
-          title={item.url}
-        >
-          {item.url}
-        </a>
-      </td>
-      <td className='px-4 py-3 align-middle'>
-        <ProgressBar progress={item.progress ?? 0} />
-      </td>
-      <td className='px-4 py-3 align-middle'>
-        <StatusBadge status={item.status} />
-      </td>
-    </tr>
+      </div>
+      <div className='min-w-0 flex-1'>
+        <div className='mb-2'>
+          <a
+            href={item.url}
+            target='_blank'
+            rel='noopener noreferrer'
+            className='line-clamp-2 block text-xs font-medium text-zinc-200 transition-colors hover:text-blue-400 hover:underline sm:text-sm'
+            title={title ?? undefined}
+            aria-label={title || item.url}
+          >
+            {title || item.url}
+          </a>
+        </div>
+
+        {/* Progress Bar */}
+        <div className='mb-2'>
+          <ProgressBar progress={item.progress ?? 0} />
+        </div>
+
+        {/* Status */}
+        <div className='flex items-center'>
+          <StatusBadge status={item.status} />
+        </div>
+      </div>
+    </div>
   );
 }
