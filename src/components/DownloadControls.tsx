@@ -1,4 +1,4 @@
-import type { RefObject } from 'react';
+import { useState, type RefObject } from 'react';
 import { Button } from '../ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Delete01Icon, Download01Icon, Download05Icon, Folder01Icon, Folder02Icon, Task02Icon } from '@hugeicons/core-free-icons';
@@ -25,22 +25,36 @@ export function DownloadControls({
   uploadList,
   fileInputRef,
 }: DownloadControlsProps) {
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [pendingDirectory, setPendingDirectory] = useState<FileSystemDirectoryHandle | null>(null);
+
   const handleSelectDirectory = async () => {
     if (!('showDirectoryPicker' in window)) {
       alert('Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera.');
       return;
     }
     try {
-      const directoryHandle = await (window as any).showDirectoryPicker({
-        mode: 'readwrite',
-      });
-      setSelectedDirectory(directoryHandle);
+      const directoryHandle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
+      // show confirmation modal instead of immediately setting
+      setPendingDirectory(directoryHandle);
+      setShowConfirm(true);
     } catch (error: any) {
       if (error.name !== 'AbortError') {
         console.error('Error selecting directory:', error);
         alert('Failed to select directory. Please try again.');
       }
     }
+  };
+
+  const cancelDirectory = () => {
+    setPendingDirectory(null);
+    setShowConfirm(false);
+  };
+
+  const confirmDirectory = () => {
+    if (pendingDirectory) setSelectedDirectory(pendingDirectory);
+    setPendingDirectory(null);
+    setShowConfirm(false);
   };
 
   const handlePasteFromClipboard = async () => {
@@ -126,6 +140,30 @@ export function DownloadControls({
           </Button>
         </div>
       </div>
+
+      {/* confirmation modal */}
+      {showConfirm && pendingDirectory && (
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm'>
+          <div className='w-full max-w-sm rounded-xl border border-zinc-700/80 bg-zinc-900 p-5 shadow-xl'>
+            <h3 className='mb-2 text-sm font-semibold text-zinc-100'>Confirm download folder</h3>
+            <p className='mb-4 text-xs text-zinc-400'>Files will be saved to:</p>
+
+            <div className='mb-5 flex items-center rounded-lg bg-zinc-800/60 px-3 py-2 text-sm text-emerald-400'>
+              <HugeiconsIcon icon={Folder01Icon} size={18} className='mr-2 fill-yellow-500 text-transparent' />
+              <span className='truncate'>{pendingDirectory.name}</span>
+            </div>
+
+            <div className='flex justify-end gap-2'>
+              <Button variant='ghost' onClick={cancelDirectory}>
+                Cancel
+              </Button>
+              <Button variant='on-hold' onClick={confirmDirectory}>
+                Confirm
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
