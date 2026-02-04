@@ -19,7 +19,6 @@ export function ProgressBar({ progress }: ProgressBarProps) {
           style={{ width: `${Math.min(100, progress)}%` }}
         />
       </div>
-      <span className='w-10 shrink-0 text-right text-xs font-medium tabular-nums text-zinc-500'>{progress.toFixed(0)}%</span>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export function DownloadTable({ queue, currentPage, rowsPerPage, setCurrentPage,
     <div className='space-y-4'>
       {/* delete video */}
       <div className='flex justify-end'>
-        <Button variant='ghost' onClick={clearDownloads} className='text-zinc-500 hover:text-red-400'>
+        <Button variant='ghost' onClick={clearDownloads} size='icon' className='text-zinc-500 hover:bg-red-500/20 hover:text-red-500'>
           <HugeiconsIcon icon={Delete01Icon} size={20} />
         </Button>
       </div>

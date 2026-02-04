@@ -4,7 +4,7 @@ import { DownloadControls } from './DownloadControls';
 import { StatsCards } from './StatusCards';
 import { DownloadTable } from './DownloadTable';
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://handsome-susana-laxa-6d48f7a6.koyeb.app/';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 export interface DownloadItem {
   id: number;
@@ -15,6 +15,7 @@ export interface DownloadItem {
   filename?: string;
   filepath?: string;
   size?: string;
+  duration?: string;
 }
 
 export interface StatsData {
