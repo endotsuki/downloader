@@ -5,52 +5,30 @@ interface StatsCardsProps {
   queued: number;
 }
 
+interface StatsCardsProps {
+  total: number;
+  completed: number;
+  downloading: number;
+  queued: number;
+}
 export function StatsCards({ total, completed, downloading, queued }: StatsCardsProps) {
   const stats = [
-    {
-      label: 'Total',
-      value: total,
-      color: 'text-white',
-      bgColor: 'bg-white/5',
-    },
-    {
-      label: 'Completed',
-      value: completed,
-      color: 'text-green-400',
-      bgColor: 'bg-green-500/10',
-    },
-    {
-      label: 'Downloading',
-      value: downloading,
-      color: 'text-blue-400',
-      bgColor: 'bg-blue-500/10',
-    },
-    {
-      label: 'Queued',
-      value: queued,
-      color: 'text-amber-400',
-      bgColor: 'bg-amber-500/10',
-    },
-    {
-      label: 'Failed',
-      value: total - completed - downloading - queued,
-      color: 'text-red-400',
-      bgColor: 'bg-red-500/10',
-    },
+    { label: 'Total', value: total, color: 'text-zinc-100', ring: 'ring-zinc-500/20' },
+    { label: 'Completed', value: completed, color: 'text-green-400', ring: 'ring-green-500/20' },
+    { label: 'Downloading', value: downloading, color: 'text-blue-400', ring: 'ring-blue-500/20' },
+    { label: 'Queued', value: queued, color: 'text-amber-400', ring: 'ring-amber-500/20' },
+    { label: 'Failed', value: total - completed - downloading - queued, color: 'text-red-400', ring: 'ring-red-500/20' },
   ];
 
   return (
-    <div className='mb-6 grid grid-cols-2 gap-3 md:grid-cols-5'>
+    <div className='mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5'>
       {stats.map((stat) => (
         <div
           key={stat.label}
-          className='group rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl transition-all hover:bg-white/10'
+          className={`group relative rounded-2xl bg-zinc-900/40 p-6 ring-1 ${stat.ring} backdrop-blur-sm transition-all hover:border-zinc-700 hover:bg-zinc-800/50 hover:ring-4`}
         >
-          <div className={`text-6xl font-bold ${stat.color} mb-1`}>{stat.value}</div>
-          <div className='text-sm text-gray-400'>{stat.label}</div>
-          <div className={`mt-2 h-1 ${stat.bgColor} overflow-hidden rounded-full`}>
-            <div className={`h-full ${stat.color.replace('text', 'bg')} opacity-60 transition-opacity group-hover:opacity-100`} />
-          </div>
+          <div className='mb-1 text-xs font-semibold uppercase tracking-wider text-zinc-500'>{stat.label}</div>
+          <div className={`text-5xl font-bold tabular-nums ${stat.color}`}>{stat.value}</div>
         </div>
       ))}
     </div>
