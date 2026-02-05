@@ -2,16 +2,14 @@ import { Icon } from 'iconza';
 import type { DownloadItem } from './App';
 import { StatusBadge } from './StatusBadge';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Alert02Icon } from '@hugeicons/core-free-icons';
 import { ProgressBar } from './Progressbar';
 import { useState, useEffect, useRef } from 'react';
+import { getPlatformIcon } from './PlatformIcon';
 
 interface TableRowProps {
   item: DownloadItem;
   index: number;
 }
-
-type PlatformIcon = { type: 'iconza'; name: string } | { type: 'hugeicons'; icon: typeof Alert02Icon };
 
 export function TableRow({ item }: TableRowProps) {
   const [thumbnail, setThumbnail] = useState<string>('');
@@ -19,16 +17,6 @@ export function TableRow({ item }: TableRowProps) {
   const [thumbnailLoading, setThumbnailLoading] = useState(false);
   const [thumbnailError, setThumbnailError] = useState(false);
   const fetchedUrls = useRef(new Set<string>()); // Track fetched URLs to prevent reloading
-
-  const getPlatformIcon = (url: string): PlatformIcon => {
-    const urlLower = url.toLowerCase();
-    if (urlLower.includes('youtube') || urlLower.includes('youtu.be')) return { type: 'iconza', name: 'YouTube' };
-    if (urlLower.includes('facebook')) return { type: 'iconza', name: 'FacebookSquare' };
-    if (urlLower.includes('tiktok')) return { type: 'iconza', name: 'TikTokFill' };
-    if (urlLower.includes('instagram')) return { type: 'iconza', name: 'Instagram' };
-    if (urlLower.includes('pin')) return { type: 'iconza', name: 'Pinterest' };
-    return { type: 'hugeicons', icon: Alert02Icon };
-  };
 
   const fetchThumbnail = async (url: string) => {
     if (fetchedUrls.current.has(url)) {
