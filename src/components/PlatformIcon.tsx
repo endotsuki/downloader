@@ -16,5 +16,7 @@ export const getPlatformIcon = (url: string): PlatformIcon => {
   if (urlLower.includes('snapchat')) return { type: 'iconza', name: 'Snapchat' };
   if (urlLower.includes('vk.com')) return { type: 'iconza', name: 'VK' };
   if (urlLower.includes('xiaohongshu')) return { type: 'iconza', name: 'RedNote' };
+  if (urlLower.includes('bilibili')) return { type: 'iconza', name: 'Bilibili' };
+  if (urlLower.includes('vimeo')) return { type: 'iconza', name: 'Vimeo' };
   return { type: 'hugeicons', icon: Alert02Icon };
 };

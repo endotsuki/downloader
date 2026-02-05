@@ -3,6 +3,7 @@ import { PageHeader } from './PageHeader';
 import { DownloadControls } from './DownloadControls';
 import { StatsCards } from './StatusCards';
 import { DownloadTable } from './DownloadTable';
+import { Icon } from 'iconza';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 
@@ -196,6 +197,21 @@ export default function VideoDownloader() {
             <span className='font-medium text-white'>one by one</span> • Supports <span className='font-medium text-white'>500+ links</span>
           </p>
           <p className='mt-2 select-none text-sm text-gray-400'>&copy; {new Date().getFullYear()} MMO &bull; All rights reserved</p>
+        </div>
+        <div className='mt-6 grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12'>
+          <Icon name='FacebookSquare' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='TikTok' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Instagram' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Pinterest' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Vimeo' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Twitter' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Twitch' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Reddit' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='LinkedIn' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Bilibili' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='Snapchat' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='VK' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
+          <Icon name='RedNote' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
         </div>
       </div>
     </div>
