@@ -1,7 +1,8 @@
-import { useState, type RefObject } from 'react';
+import { type RefObject } from 'react';
 import { Button } from '../ui/button';
 import { HugeiconsIcon } from '@hugeicons/react';
-import { Delete01Icon, Download01Icon, Download05Icon, Folder01Icon, Folder02Icon, Task02Icon } from '@hugeicons/core-free-icons';
+import { Delete01Icon, Download01Icon, Download05Icon, Folder01Icon, Task02Icon } from '@hugeicons/core-free-icons';
+import { AnimatePresence, motion } from 'framer-motion';
 
 interface DownloadControlsProps {
   videoLink: string;
@@ -25,36 +26,21 @@ export function DownloadControls({
   uploadList,
   fileInputRef,
 }: DownloadControlsProps) {
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [pendingDirectory, setPendingDirectory] = useState<FileSystemDirectoryHandle | null>(null);
-
   const handleSelectDirectory = async () => {
     if (!('showDirectoryPicker' in window)) {
       alert('Directory picker is not supported in this browser. Please use Chrome, Edge, or Opera.');
       return;
     }
+
     try {
       const directoryHandle = await (window as any).showDirectoryPicker({ mode: 'readwrite' });
-      // show confirmation modal instead of immediately setting
-      setPendingDirectory(directoryHandle);
-      setShowConfirm(true);
+      setSelectedDirectory(directoryHandle);
     } catch (error: any) {
       if (error.name !== 'AbortError') {
         console.error('Error selecting directory:', error);
         alert('Failed to select directory. Please try again.');
       }
     }
-  };
-
-  const cancelDirectory = () => {
-    setPendingDirectory(null);
-    setShowConfirm(false);
-  };
-
-  const confirmDirectory = () => {
-    if (pendingDirectory) setSelectedDirectory(pendingDirectory);
-    setPendingDirectory(null);
-    setShowConfirm(false);
   };
 
   const handlePasteFromClipboard = async () => {
@@ -96,40 +82,63 @@ export function DownloadControls({
 
       {/* Secondary: Folder, Batch, Clear */}
       <div className='flex flex-col gap-4 border-t border-zinc-800/80 py-9 sm:flex-row sm:items-center'>
-        <div className='flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3'>
+        <motion.div layout className='flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center sm:gap-3'>
           <span className='shrink-0 text-xs font-semibold uppercase tracking-wider text-zinc-500'>Save to</span>
-          <div className='flex min-w-0 flex-1 flex-col gap-2 sm:flex-row'>
-            <div className={`flex min-h-[40px] items-center ${inputBase} cursor-default text-zinc-400`}>
-              {selectedDirectory ? (
-                <span className='flex items-center truncate text-emerald-400/90'>
-                  <HugeiconsIcon icon={Folder01Icon} size={20} className='mr-1 fill-yellow-500 text-transparent' />
-                  {selectedDirectory.name}
-                </span>
-              ) : (
-                <span>Browser default</span>
-              )}
-            </div>
-            <div className='flex shrink-0 gap-2'>
-              <Button variant='outline' onClick={handleSelectDirectory}>
-                <HugeiconsIcon icon={Folder02Icon} size={20} />
-                Folder
-              </Button>
+
+          <motion.div layout className='flex min-w-0 flex-1 flex-col gap-2 sm:flex-row'>
+            {/* Display / Picker */}
+            <motion.button
+              layout
+              type='button'
+              onClick={handleSelectDirectory}
+              className={`flex min-h-[40px] min-w-0 flex-1 items-center ${inputBase} cursor-pointer`}
+            >
+              <AnimatePresence mode='popLayout'>
+                {selectedDirectory ? (
+                  <motion.span
+                    key='selected'
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    className='flex min-w-0 items-center truncate text-zinc-400'
+                  >
+                    <HugeiconsIcon icon={Folder01Icon} size={20} className='mr-1 fill-yellow-500 text-transparent' />
+                    {selectedDirectory.name}
+                  </motion.span>
+                ) : (
+                  <motion.span
+                    key='default'
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className='text-zinc-400'
+                  >
+                    Browser default
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
+            {/* Actions */}
+            <AnimatePresence>
               {selectedDirectory && (
-                <Button
-                  variant='ghost'
+                <motion.button
+                  key='clear'
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
                   onClick={() => setSelectedDirectory(null)}
-                  className='flex items-center text-zinc-500 hover:text-red-400'
+                  className='flex h-[40px] items-center gap-1 rounded-md px-3 text-zinc-500 hover:text-red-400'
                 >
                   <HugeiconsIcon icon={Delete01Icon} size={20} />
                   Clear
-                </Button>
+                </motion.button>
               )}
-            </div>
-          </div>
-        </div>
+            </AnimatePresence>
+          </motion.div>
+        </motion.div>
 
         <div className='hidden h-8 w-px shrink-0 bg-zinc-700/80 sm:block' />
-
         <div className='flex flex-wrap items-center gap-2'>
           <input ref={fileInputRef} type='file' accept='.txt' className='hidden' id='batch-file' onChange={uploadList} />
           <Button variant='archived'>
@@ -140,30 +149,6 @@ export function DownloadControls({
           </Button>
         </div>
       </div>
-
-      {/* confirmation modal */}
-      {showConfirm && pendingDirectory && (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm'>
-          <div className='w-full max-w-sm rounded-xl border border-zinc-700/80 bg-zinc-900 p-5 shadow-xl'>
-            <h3 className='mb-2 text-sm font-semibold text-zinc-100'>Confirm download folder</h3>
-            <p className='mb-4 text-xs text-zinc-400'>Files will be saved to:</p>
-
-            <div className='mb-5 flex items-center rounded-lg bg-zinc-800/60 px-3 py-2 text-sm text-emerald-400'>
-              <HugeiconsIcon icon={Folder01Icon} size={18} className='mr-2 fill-yellow-500 text-transparent' />
-              <span className='truncate'>{pendingDirectory.name}</span>
-            </div>
-
-            <div className='flex justify-end gap-2'>
-              <Button variant='ghost' onClick={cancelDirectory}>
-                Cancel
-              </Button>
-              <Button variant='on-hold' onClick={confirmDirectory}>
-                Confirm
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

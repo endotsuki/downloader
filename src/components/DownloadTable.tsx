@@ -1,7 +1,7 @@
 import { TableRow } from './TableRow';
 import { TablePagination } from './TablePagination';
 import type { DownloadItem } from './App';
-import { Delete01Icon, Download01Icon } from '@hugeicons/core-free-icons';
+import { Delete01Icon, Download04Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { Button } from '../ui/button';
 
@@ -34,8 +34,8 @@ export function DownloadTable({ queue, currentPage, rowsPerPage, setCurrentPage,
       <>
         {paginated.length === 0 ? (
           <div className='flex flex-col items-center gap-3 py-16'>
-            <div className='flex h-12 w-12 items-center justify-center rounded-full bg-zinc-700/60 text-zinc-500'>
-              <HugeiconsIcon icon={Download01Icon} size={24} />
+            <div className='flex h-20 w-20 items-center justify-center rounded-full bg-zinc-700/60 text-zinc-500'>
+              <HugeiconsIcon icon={Download04Icon} size={40} strokeWidth={1} />
             </div>
             <div className='text-center'>
               <p className='font-medium text-zinc-300'>No downloads yet</p>

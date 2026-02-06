@@ -60,7 +60,7 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "not-data-[variant=destructive]:text-zinc-300 group/dropdown-menu-item relative flex cursor-default select-none items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm hover:bg-zinc-700/80 focus:bg-zinc-700/80 data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-red-400 data-[disabled]:opacity-50 [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        'not-data-[variant=destructive]:text-zinc-300 group/dropdown-menu-item relative flex cursor-pointer select-none items-center gap-1.5 rounded-lg px-2.5 py-2 text-sm hover:bg-zinc-700/80 focus:bg-zinc-700/80 data-[disabled]:pointer-events-none data-[inset]:pl-8 data-[variant=destructive]:text-red-400 data-[disabled]:opacity-50',
         className
       )}
       {...props}

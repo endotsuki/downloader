@@ -7,7 +7,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
-import { ArrowLeft01Icon, ArrowRight01Icon } from '@hugeicons/core-free-icons';
+import { ArrowLeft01Icon, ArrowRight01Icon, Tick02Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 
 interface TablePaginationProps {
@@ -50,7 +50,7 @@ export function TablePagination({
             {[25, 50, 100, 200].map((value) => (
               <DropdownMenuItem key={value} onClick={() => handleRowsChange(value)} className='flex justify-between'>
                 {value}
-                {rowsPerPage === value && <span className='text-emerald-400'>✓</span>}
+                {rowsPerPage === value && <HugeiconsIcon icon={Tick02Icon} size={16} className='text-emerald-500' />}
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
