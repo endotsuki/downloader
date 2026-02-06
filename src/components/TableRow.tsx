@@ -27,7 +27,7 @@ export function TableRow({ item }: TableRowProps) {
     setThumbnailError(false);
 
     try {
-      const response = await fetch('http://localhost:8000/api/thumbnail', {
+      const response = await fetch('https://handsome-susana-laxa-6d48f7a6.koyeb.app/api/thumbnail', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
@@ -35,13 +35,10 @@ export function TableRow({ item }: TableRowProps) {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.thumbnailUrl) {
-          // Changed from data.thumbnail
-          // Proxy the thumbnail through your backend to avoid CORS
-          const proxiedUrl = `http://localhost:8000/api/thumbnail/image?url=${encodeURIComponent(data.thumbnailUrl)}`;
-          setThumbnail(proxiedUrl);
+        if (data.thumbnail) {
+          setThumbnail(data.thumbnail);
           setTitle(data.title || '');
-          fetchedUrls.current.add(url);
+          fetchedUrls.current.add(url); // Mark as fetched
           setThumbnailLoading(false);
           return;
         }
