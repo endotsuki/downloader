@@ -27,7 +27,7 @@ export function TableRow({ item }: TableRowProps) {
     setThumbnailError(false);
 
     try {
-      const response = await fetch('http://localhost:8000/api/thumbnail', {
+      const response = await fetch('https://downloader-iszy.onrender.com/api/thumbnail', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url }),
