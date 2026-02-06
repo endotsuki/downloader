@@ -60,7 +60,7 @@ export function DownloadControls({
         <div className='relative flex flex-col gap-2 sm:flex-row sm:gap-3'>
           <div className='relative flex-1'>
             <input
-              className={`w-full min-w-0 pr-11 ${inputBase}`}
+              className={`h-12 w-full min-w-0 rounded-xl pr-11 ${inputBase}`}
               type='text'
               placeholder='Paste video URL…'
               value={videoLink}
@@ -69,7 +69,7 @@ export function DownloadControls({
             />
             <div className='pointer-events-none absolute right-10 top-1/2 h-6 w-px -translate-y-1/2 bg-zinc-700/80' />
             <Button variant='ghost' size='icon' onClick={handlePasteFromClipboard} className='absolute right-1 top-1/2 -translate-y-1/2'>
-              <HugeiconsIcon icon={Task02Icon} size={20} />
+              <HugeiconsIcon icon={Task02Icon} size={20} className='text-blue-500' />
             </Button>
           </div>
 
