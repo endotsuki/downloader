@@ -198,7 +198,7 @@ export default function VideoDownloader() {
           </p>
           <p className='mt-2 select-none text-sm text-gray-400'>&copy; {new Date().getFullYear()} MMO &bull; All rights reserved</p>
         </div>
-        <div className='mt-6 grid grid-cols-3 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12'>
+        <div className='mt-6 flex items-center justify-center gap-2'>
           <Icon name='FacebookSquare' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
           <Icon name='TikTok' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
           <Icon name='Instagram' className='mx-auto mt-4 h-6 w-6 text-gray-500' />
